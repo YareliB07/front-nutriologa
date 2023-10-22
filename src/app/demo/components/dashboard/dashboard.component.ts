@@ -1,74 +1,141 @@
 import { Component, OnInit } from '@angular/core';
-import { SelectItem } from 'primeng/api';
-import { DataView } from 'primeng/dataview';
 import { Product } from 'src/app/demo/api/product';
+import { MessageService } from 'primeng/api';
+import { Table } from 'primeng/table';
 import { ProductService } from 'src/app/demo/service/product.service';
 
 @Component({
-    templateUrl: './dashboard.component.html'
+    templateUrl: './dashboard.component.html',
+    providers: [MessageService]
 })
 export class DashboardComponent implements OnInit {
 
+    productDialog: boolean = false;
+
+    deleteProductDialog: boolean = false;
+
+    deleteProductsDialog: boolean = false;
+
     products: Product[] = [];
 
-    sortOptions: SelectItem[] = [];
+    product: Product = {};
 
-    sortOrder: number = 0;
+    selectedProducts: Product[] = [];
 
-    sortField: string = '';
+    submitted: boolean = false;
 
-    sourceCities: any[] = [];
+    cols: any[] = [];
 
-    targetCities: any[] = [];
+    statuses: any[] = [];
 
-    orderCities: any[] = [];
+    rowsPerPageOptions = [5, 10, 20];
 
-    constructor(private productService: ProductService) { }
+    constructor(private productService: ProductService, private messageService: MessageService) { }
 
     ngOnInit() {
         this.productService.getProducts().then(data => this.products = data);
 
-        this.sourceCities = [
-            { name: 'San Francisco', code: 'SF' },
-            { name: 'London', code: 'LDN' },
-            { name: 'Paris', code: 'PRS' },
-            { name: 'Istanbul', code: 'IST' },
-            { name: 'Berlin', code: 'BRL' },
-            { name: 'Barcelona', code: 'BRC' },
-            { name: 'Rome', code: 'RM' }];
+        this.cols = [
+            { field: 'product', header: 'Product' },
+            { field: 'price', header: 'Price' },
+            { field: 'category', header: 'Category' },
+            { field: 'rating', header: 'Reviews' },
+            { field: 'inventoryStatus', header: 'Status' }
+        ];
 
-        this.targetCities = [];
-
-        this.orderCities = [
-            { name: 'San Francisco', code: 'SF' },
-            { name: 'London', code: 'LDN' },
-            { name: 'Paris', code: 'PRS' },
-            { name: 'Istanbul', code: 'IST' },
-            { name: 'Berlin', code: 'BRL' },
-            { name: 'Barcelona', code: 'BRC' },
-            { name: 'Rome', code: 'RM' }];
-
-        this.sortOptions = [
-            { label: 'Price High to Low', value: '!price' },
-            { label: 'Price Low to High', value: 'price' }
+        this.statuses = [
+            { label: 'INSTOCK', value: 'instock' },
+            { label: 'LOWSTOCK', value: 'lowstock' },
+            { label: 'OUTOFSTOCK', value: 'outofstock' }
         ];
     }
 
-    onSortChange(event: any) {
-        const value = event.value;
+    openNew() {
+        this.product = {};
+        this.submitted = false;
+        this.productDialog = true;
+    }
 
-        if (value.indexOf('!') === 0) {
-            this.sortOrder = -1;
-            this.sortField = value.substring(1, value.length);
-        } else {
-            this.sortOrder = 1;
-            this.sortField = value;
+    deleteSelectedProducts() {
+        this.deleteProductsDialog = true;
+    }
+
+    editProduct(product: Product) {
+        this.product = { ...product };
+        this.productDialog = true;
+    }
+
+    deleteProduct(product: Product) {
+        this.deleteProductDialog = true;
+        this.product = { ...product };
+    }
+
+    confirmDeleteSelected() {
+        this.deleteProductsDialog = false;
+        this.products = this.products.filter(val => !this.selectedProducts.includes(val));
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+        this.selectedProducts = [];
+    }
+
+    confirmDelete() {
+        this.deleteProductDialog = false;
+        this.products = this.products.filter(val => val.id !== this.product.id);
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+        this.product = {};
+    }
+
+    hideDialog() {
+        this.productDialog = false;
+        this.submitted = false;
+    }
+
+    saveProduct() {
+        this.submitted = true;
+
+        if (this.product.name?.trim()) {
+            if (this.product.id) {
+                // @ts-ignore
+                this.product.inventoryStatus = this.product.inventoryStatus.value ? this.product.inventoryStatus.value : this.product.inventoryStatus;
+                this.products[this.findIndexById(this.product.id)] = this.product;
+                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+            } else {
+                this.product.id = this.createId();
+                this.product.code = this.createId();
+                this.product.image = 'product-placeholder.svg';
+                // @ts-ignore
+                this.product.inventoryStatus = this.product.inventoryStatus ? this.product.inventoryStatus.value : 'INSTOCK';
+                this.products.push(this.product);
+                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
+            }
+
+            this.products = [...this.products];
+            this.productDialog = false;
+            this.product = {};
         }
     }
 
-    onFilter(dv: DataView, event: Event) {
-        dv.filter((event.target as HTMLInputElement).value);
-    }
-    
-}
+    findIndexById(id: string): number {
+        let index = -1;
+        for (let i = 0; i < this.products.length; i++) {
+            if (this.products[i].id === id) {
+                index = i;
+                break;
+            }
+        }
 
+        return index;
+    }
+
+    createId(): string {
+        let id = '';
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < 5; i++) {
+            id += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return id;
+    }
+
+    onGlobalFilter(table: Table, event: Event) {
+        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    }
+}
