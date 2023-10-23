@@ -4,10 +4,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
 import { ProductService } from './demo/service/product.service';
-import { CountryService } from './demo/service/country.service';
-import { EventService } from './demo/service/event.service';
-import { IconService } from './demo/service/icon.service';
-import { NodeService } from './demo/service/node.service';
 
 @NgModule({
     declarations: [
@@ -19,8 +15,7 @@ import { NodeService } from './demo/service/node.service';
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
-        CountryService, EventService, IconService, NodeService,
-        ProductService
+         ProductService
     ],
     bootstrap: [AppComponent]
 })
