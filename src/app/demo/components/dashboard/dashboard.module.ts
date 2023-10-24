@@ -1,43 +1,43 @@
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardsRoutingModule } from './dashboard-routing.module';
-import { TableModule } from 'primeng/table';
-import { FileUploadModule } from 'primeng/fileupload';
-import { ButtonModule } from 'primeng/button';
-import { RippleModule } from 'primeng/ripple';
-import { ToastModule } from 'primeng/toast';
-import { ToolbarModule } from 'primeng/toolbar';
-import { RatingModule } from 'primeng/rating';
+import { DataViewModule } from 'primeng/dataview';
+import { PickListModule } from 'primeng/picklist';
+import { OrderListModule } from 'primeng/orderlist';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DropdownModule } from 'primeng/dropdown';
+import { RatingModule } from 'primeng/rating';
+import { ButtonModule } from 'primeng/button';
+
+import { ToolbarModule } from 'primeng/toolbar';
+import { DialogModule } from 'primeng/dialog';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { DialogModule } from 'primeng/dialog';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+
 
 @NgModule({
 	imports: [
 		CommonModule,
-        DashboardsRoutingModule,
-        TableModule,
-        FileUploadModule,
-        FormsModule,
-        ButtonModule,
-        RippleModule,
-        ToastModule,
+		FormsModule,
+		DashboardsRoutingModule,
+		DataViewModule,
+		PickListModule,
+		OrderListModule,
+		InputTextModule,
+		DropdownModule,
+		RatingModule,
+		ButtonModule,
         ToolbarModule,
-        RatingModule,
-        InputTextModule,
-        InputTextareaModule,
-        DropdownModule,
-        RadioButtonModule,
-        InputNumberModule,
-        DialogModule
+		DialogModule,
+		RadioButtonModule,
+		InputNumberModule,
+		InputTextareaModule,
+		
 	],
 	declarations: [DashboardComponent]
 })
 export class DashboardModule { }
-
-
