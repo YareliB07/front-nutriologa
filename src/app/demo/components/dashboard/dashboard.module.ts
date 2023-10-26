@@ -11,12 +11,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { RatingModule } from 'primeng/rating';
 import { ButtonModule } from 'primeng/button';
-
+import { TabViewModule } from 'primeng/tabview';
 import { ToolbarModule } from 'primeng/toolbar';
 import { DialogModule } from 'primeng/dialog';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { CheckboxModule } from 'primeng/checkbox';
 
 
 @NgModule({
@@ -36,6 +38,9 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 		RadioButtonModule,
 		InputNumberModule,
 		InputTextareaModule,
+		TabViewModule,
+		MultiSelectModule,
+		CheckboxModule
 		
 	],
 	declarations: [DashboardComponent]

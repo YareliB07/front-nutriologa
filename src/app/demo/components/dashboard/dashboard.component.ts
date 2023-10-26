@@ -25,6 +25,8 @@ export class DashboardComponent implements OnInit {
 
     cols: any[] = [];
 
+    expedienteDialog: boolean = false
+
     constructor(private productService: ProductService, private messageService: MessageService) { }
 
     ngOnInit() {
@@ -39,6 +41,43 @@ export class DashboardComponent implements OnInit {
         ];
        
     }
+
+
+    activeTabIndex: number =0;
+
+    openExp() {
+        this.submitted = false;
+        this.expedienteDialog = true;
+    }
+
+    cerrarDialog() {
+        this.expedienteDialog = false;
+        this.submitted = false;
+    }
+
+    guardarExp(){
+       
+    }
+
+    selectedInfecciosas: string[] = [];
+    selectedCronicas: string[] = [];
+    selectedConsumo: string[] = [];
+    selectedTratamiento: string[] = [];
+    selectedGineco: string[] = [];
+    selectedPeriodo: string[] = [];
+    selectedSintomas: string[] = [];
+
+    periodo!: string;
+    cirugias!: string;
+    anticonceptivos!: string;
+    climaterio!: string;
+    hormonal!: string;
+    actividad!: string;
+    estiloV!: string;
+    apetito!: string;
+    controlPeso!: string;
+    obtuvoResultado!: string;
+    medicamentosBajar!: string;
 
 
     openNew() {

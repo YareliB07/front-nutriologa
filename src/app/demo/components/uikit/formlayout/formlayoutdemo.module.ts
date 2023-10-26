@@ -3,32 +3,44 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormLayoutDemoComponent } from './formlayoutdemo.component';
 import { FormLayoutDemoRoutingModule } from './formlayoutdemo-routing.module';
-import { AutoCompleteModule } from "primeng/autocomplete";
-import { CalendarModule } from "primeng/calendar";
-import { ChipsModule } from "primeng/chips";
-import { DropdownModule } from "primeng/dropdown";
-import { InputMaskModule } from "primeng/inputmask";
-import { InputNumberModule } from "primeng/inputnumber";
-import { CascadeSelectModule } from "primeng/cascadeselect";
-import { MultiSelectModule } from "primeng/multiselect";
-import { InputTextareaModule } from "primeng/inputtextarea";
-import { InputTextModule } from "primeng/inputtext";
+import { DataViewModule } from 'primeng/dataview';
+import { PickListModule } from 'primeng/picklist';
+import { OrderListModule } from 'primeng/orderlist';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { RatingModule } from 'primeng/rating';
+import { ButtonModule } from 'primeng/button';
+import { TabViewModule } from 'primeng/tabview';
+import { ToolbarModule } from 'primeng/toolbar';
+import { DialogModule } from 'primeng/dialog';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { CheckboxModule } from 'primeng/checkbox';
+
 
 @NgModule({
 	imports: [
 		CommonModule,
 		FormsModule,
 		FormLayoutDemoRoutingModule,
-		AutoCompleteModule,
-		CalendarModule,
-		ChipsModule,
+		DataViewModule,
+		PickListModule,
+		OrderListModule,
+		InputTextModule,
 		DropdownModule,
-		InputMaskModule,
+		RatingModule,
+		ButtonModule,
+        ToolbarModule,
+		DialogModule,
+		RadioButtonModule,
 		InputNumberModule,
-		CascadeSelectModule,
-		MultiSelectModule,
 		InputTextareaModule,
-		InputTextModule
+		TabViewModule,
+		MultiSelectModule,
+		CheckboxModule
+		
 	],
 	declarations: [FormLayoutDemoComponent]
 })
