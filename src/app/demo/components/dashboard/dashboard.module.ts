@@ -19,7 +19,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CheckboxModule } from 'primeng/checkbox';
-
+import { InputMaskModule } from 'primeng/inputmask';
 
 @NgModule({
 	imports: [
@@ -40,7 +40,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 		InputTextareaModule,
 		TabViewModule,
 		MultiSelectModule,
-		CheckboxModule
+		CheckboxModule,
+		InputMaskModule
 		
 	],
 	declarations: [DashboardComponent]

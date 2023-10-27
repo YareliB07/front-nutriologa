@@ -9,9 +9,7 @@
 					<div class="flex flex-column md:flex-row md:justify-content-between gap-2">
 						<button pButton pRipple type="button" label="Nuevo" icon="pi pi-plus" class="p-button-success"
 							(click)="openNew()"></button>
-						<button pButton pRipple label="Eliminar" icon="pi pi-trash" class="p-button-danger"
-							(click)="deleteSelectedProducts()"
-							[disabled]="!selectedProducts || !selectedProducts.length"></button>
+
 					</div>
 				</ng-template>
 
@@ -25,17 +23,6 @@
 			</p-toolbar>
 
 			<p-dataView #dv [value]="products" [paginator]="true" [rows]="9" filterBy="name" layout="grid">
-				<ng-template let-product pTemplate="listItem">
-					<div class="col-12">
-						<div class="flex flex-column md:flex-row align-items-center p-3 w-full">
-
-							<div class="flex-1 flex flex-column align-items-center text-center md:text-left">
-								<div class="font-bold text-2xl">{{product.name}}</div>
-								<div class="mb-2">{{product.description}}</div>
-							</div>
-						</div>
-					</div>
-				</ng-template>
 
 				<ng-template let-product pTemplate="gridItem">
 					<div class="col-12 md:col-4">
@@ -50,9 +37,15 @@
 
 							</div>
 							<div class="flex align-items-center justify-content-center">
-								<button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editProduct(product)"></button>
-								<button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning mr-2" (click)="deleteProduct(product)"></button>
-								<button pButton pRipple icon="pi pi-book" class="p-button-rounded p-button-help" (click)="openExp(product)"></button>
+								<button pButton pRipple icon="pi pi-pencil"
+									class="p-button-rounded p-button-success mr-2"
+									(click)="editPaciente(product)"></button>
+								<button pButton pRipple icon="pi pi-trash"
+									class="p-button-rounded p-button-warning mr-2" (click)="confirmDelete() "></button>
+								<button pButton pRipple icon="pi pi-book" class="p-button-rounded p-button-help mr-2"
+									(click)="openExp(paciente)"></button>
+								<button pButton pRipple icon="pi pi-calculator"
+									class="p-button-rounded p-button-check mr-2" (click)="openMed(medidas)"></button>
 							</div>
 						</div>
 					</div>
@@ -73,9 +66,13 @@
 			</div>
 
 			<div class="field">
-				<label for="Ocupación">Ocupación</label>
+				<!-- <label for="Ocupación">Ocupación</label>
 				<textarea id="ocupation" pInputTextarea [(ngModel)]="product.ocupation" required rows="3"
-					cols="20"></textarea>
+					cols="20"></textarea> -->
+				<label for="Ocupación">Ocupación</label>
+				<input type="text" pInputText id="ocupation" [(ngModel)]="product.ocupation" required autofocus
+					[ngClass]="{'ng-invalid ng-dirty' : submitted && !product.ocupation}" />
+				<small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name">El campo es requerido.</small>
 			</div>
 
 			<div class="field">
@@ -94,701 +91,836 @@
 
 					<div class="formgrid mb-3">
 						<div class="field col">
-							<label for="age">Edad</label>
-							<p-inputNumber id="age" [(ngModel)]="product.age" [showButtons]="true" [min]="0"
-								[max]="100"></p-inputNumber>
+							<!-- <label for="age">Edad</label>
+							<p-inputNumber id="age" [(ngModel)]="product.age"></p-inputNumber>
+						    <-->
+							<span class="block mb-2">Edad</span>
+							<p-inputMask id="age" mask="99" [(ngModel)]="product.age" required autofocus
+								[ngClass]="{'ng-invalid ng-dirty' : submitted && !product.age}"></p-inputMask>
 						</div>
 					</div>
 
 					<div class="formgrid mb-3">
 						<div class="field col">
-							<label for="pnumber">Numero telefónico</label>
-							<p-inputNumber id="pnumber" [(ngModel)]="product.pnumber"></p-inputNumber>
+							<!-- <label for="pnumber">Numero telefónico</label> -->
+							<!-- <p-inputNumber id="pnumber" [(ngModel)]="product.pnumber"></p-inputNumber> -->
+							<span class="block mb-2">Número Telefónico</span>
+							<p-inputMask id="pnumber" mask="(999) 999-9999" [(ngModel)]="product.pnumber" required
+								autofocus
+								[ngClass]="{'ng-invalid ng-dirty' : submitted && !product.pnumber}"></p-inputMask>
 						</div>
 					</div>
 				</div>
 			</div>
 		</ng-template>
+
 		<ng-template pTemplate="footer">
 			<button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
 				(click)="hideDialog()"></button>
 			<button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
 				(click)="saveProduct()"></button>
 		</ng-template>
+
 	</p-dialog>
-
-
-	<!-- EXPEDIENTE -->
-	<p-dialog [(visible)]="expedienteDialog" [style]="{width: 'auto'}" header="Expediente" [modal]="true"
-		class="p-fluid">
-		<p-tabView [activeIndex]="activeTabIndex">
-			<p-tabPanel header="1">
-				<h1>Antecedentes médicos</h1>
-				<div class="field">
-					<label htmlFor="name1"><b>Motivo de consulta:</b> </label>
-					<input pInputText id="motivo" type="text" />
-				</div>
-				<div class="field">
-					<label htmlFor="email1"><b>Dx médico y estado de salud actual:</b> </label>
-					<input pInputText id="Dx" type="text" />
-				</div>
-
-				<h4>Antecedentes personales patológicos</h4>
-				<b>Enfermedades infecciosas:</b>
-				<div class=" flex  gap-7">
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group1" value="Hepatitis" [(ngModel)]="selectedInfecciosas"
-							inputId="hep"></p-checkbox>
-						<label for="hep">Hepatitis</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group1" value="Varicela" [(ngModel)]="selectedInfecciosas"
-							inputId="var"></p-checkbox>
-						<label for="var">Varicela</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group1" value="Sarampion" [(ngModel)]="selectedInfecciosas"
-							inputId="sar"></p-checkbox>
-						<label for="sar">Sarampión</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group1" value="Rubeola" [(ngModel)]="selectedInfecciosas"
-							inputId="rub"></p-checkbox>
-						<label for="rub">Rubeola</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<label htmlFor="otro1" class="col-6 mb-2 md:col-2 md:mb-0">Otro:</label>
-						<div class="col-12 md:col-10">
-							<input pInputText id="otro1" type="text" />
-						</div>
-					</div>
-				</div>
-
-				<b>Enfermedades crónicas:</b>
-				<div class="flex  gap-7">
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group2" value="Diabetes" [(ngModel)]="selectedCronicas"
-							inputId="dia"></p-checkbox>
-						<label for="dia">Diabetes</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group2" value="HTA" [(ngModel)]="selectedCronicas" inputId="hta"></p-checkbox>
-						<label for="hta">HTA</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group2" value="Oncológicos" [(ngModel)]="selectedCronicas"
-							inputId="onc"></p-checkbox>
-						<label for="onc">Oncológicos</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group2" value="Hipo/hipertiroidismo" [(ngModel)]="selectedCronicas"
-							inputId="hh"></p-checkbox>
-						<label for="hh">Hipo/hipertiroidismo</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group2" value="SOP" [(ngModel)]="selectedCronicas" inputId="sop"></p-checkbox>
-						<label for="sop">SOP</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<label htmlFor="otro2" class="col-6 mb-2 md:col-2 md:mb-0">Otro:</label>
-						<div class="col-12 md:col-10">
-							<input pInputText id="otro2" type="text" />
-						</div>
-					</div>
-				</div>
-
-				<b>Consumo:</b>
-				<div class="flex gap-8">
-					<div class="flex align-items-center gap-3">
-						<p-checkbox name="group3" value="Tabaco" [(ngModel)]="selectedConsumo"
-							inputId="dia"></p-checkbox>
-						<label for="dia">Tabaco</label>
-					</div>
-					<div class="flex align-items-center gap-3">
-						<p-checkbox name="group3" value="Alcohol" [(ngModel)]="selectedConsumo"
-							inputId="hta"></p-checkbox>
-						<label for="hta">Alcohol</label>
-					</div>
-					<div class="flex align-items-center gap-3">
-						<p-checkbox name="group3" value="Alguna droga" [(ngModel)]="selectedConsumo"
-							inputId="onc"></p-checkbox>
-						<label for="onc">Alguna droga</label>
-					</div>
-					<div class="flex align-items-center gap-3">
-						<label htmlFor="cual1" class="col-6 mb-2 md:col-2 md:mb-0">¿Cuál?:</label>
-						<div class="col-12 md:col-10">
-							<input pInputText id="cual1" type="text" />
-						</div>
-					</div>
-				</div>
-
-				<div class="field">
-					<label htmlFor="alergias"><b>Alergias:</b></label>
-					<input pInputText id="alergias" type="text" />
-				</div>
-
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="cirugias"><b>Cirugías:</b></label>
-					<div class="flex align-items-center">
-						<p-radioButton name="group4" value="Si" [(ngModel)]="cirugias" inputId="si"></p-radioButton>
-						<label for="si" class="ml-2">Si</label>
-					</div>
-
-					<div class="flex align-items-center">
-						<p-radioButton name="group4" value="No" [(ngModel)]="cirugias" inputId="no"></p-radioButton>
-						<label for="no" class="ml-2">No</label>
-					</div>
-				</div>
-
-
-			</p-tabPanel>
-
-
-			<p-tabPanel header="2">
-				<h1>Antecedentes gineco obstétricos</h1>
-
-				<div class="flex gap-5">
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group5" value="Embarazos" [(ngModel)]="selectedGineco"
-							inputId="emb"></p-checkbox>
-						<label for="emb">Embarazos</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group5" value="Aborto" [(ngModel)]="selectedGineco"
-							inputId="abo"></p-checkbox>
-						<label for="abo">Aborto</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group5" value="Parto" [(ngModel)]="selectedGineco" inputId="par"></p-checkbox>
-						<label for="par">Parto</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group5" value="Cesárea" [(ngModel)]="selectedGineco"
-							inputId="ces"></p-checkbox>
-						<label for="ces">Cesárea</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group5" value="Nada" [(ngModel)]="selectedGineco" inputId="nad"></p-checkbox>
-						<label for="nad">Nada</label>
-					</div>
-				</div>
-
-				<br>
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="cirugias"><b>Períodos menstruales:</b></label>
-
-					<div class="flex align-items-center">
-						<p-radioButton name="group6" value="Regulares" [(ngModel)]="periodo"
-							inputId="reg"></p-radioButton>
-						<label for="reg" class="ml-2">Regulares</label>
-					</div>
-
-					<div class="flex align-items-center">
-						<p-radioButton name="group6" value="Irregulares" [(ngModel)]="periodo"
-							inputId="irr"></p-radioButton>
-						<label for="irr" class="ml-2">Irregulares</label>
-					</div>
-				</div>
-				<br>
-
-				<div class="field grid align-items-center">
-					<label htmlFor="san" class="col-12 mb-2 md:col-5 md:mb-0 "><b>Días que dura el sangrado:</b></label>
-					<div class="col-6 md:col-7">
-						<input pInputText id="san" type="text" />
-					</div>
-				</div>
-
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="cirugias"><b>Uso de anticonceptivos:</b></label>
-					<div class="flex align-items-center">
-						<p-radioButton name="group7" value="Si" [(ngModel)]="anticonceptivos"
-							inputId="si"></p-radioButton>
-						<label for="si" class="ml-2">Si</label>
-					</div>
-
-					<div class="flex align-items-center">
-						<p-radioButton name="group7" value="No" [(ngModel)]="anticonceptivos"
-							inputId="no"></p-radioButton>
-						<label for="no" class="ml-2">No</label>
-					</div>
-				</div>
-
-				<br>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="cual2"><b>¿Cuáles?:</b></label>
-						<input pInputText id="cual2" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="dos"><b>Dosis:</b></label>
-						<input pInputText id="dos" type="text" />
-					</div>
-				</div>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="tie"><b>Tiempo usándolos:</b></label>
-						<input pInputText id="tie" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="controlados"><b>¿Son controlados?</b></label>
-						<input pInputText id="controlados" type="text" />
-					</div>
-				</div>
-
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="clim"><b>Climaterio:</b></label>
-					<div class="flex align-items-center">
-						<p-radioButton name="group8" value="Si" [(ngModel)]="climaterio" inputId="si"></p-radioButton>
-						<label for="si" class="ml-2">Si</label>
-					</div>
-
-					<div class="flex align-items-center">
-						<p-radioButton name="group8" value="No" [(ngModel)]="climaterio" inputId="no"></p-radioButton>
-						<label for="no" class="ml-2">No</label>
-					</div>
-					<div class="flex align-items-center gap-3">
-						<label htmlFor="fecha" class="col-6 mb-2 md:col-2 md:mb-0"><b>Fecha:</b></label>
-						<div class="col-12 md:col-10">
-							<input pInputText id="fecha" type="text" />
-						</div>
-					</div>
-				</div>
-
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="hor"><b>Terapia de remplazo hormonal:</b></label>
-					<div class="flex align-items-center">
-						<p-radioButton name="group9" value="Si" [(ngModel)]="hormonal" inputId="si"></p-radioButton>
-						<label for="si" class="ml-2">Si</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group9" value="No" [(ngModel)]="hormonal" inputId="no"></p-radioButton>
-						<label for="no" class="ml-2">No</label>
-					</div>
-				</div>
-				<br>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="dos2"><b>Dosis:</b></label>
-						<input pInputText id="dos2" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="nomH"><b>Nombre:</b></label>
-						<input pInputText id="nomH" type="text" />
-					</div>
-				</div>
-			</p-tabPanel>
-
-
-			<p-tabPanel header="3">
-				<h1>Tratamiento</h1>
-				<div class="flex gap-5">
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group10" value="Toma laxantes" [(ngModel)]="selectedTratamiento"
-							inputId="lax"></p-checkbox>
-						<label for="lax">Toma laxantes</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group10" value="Diuréticos" [(ngModel)]="selectedTratamiento"
-							inputId="diu"></p-checkbox>
-						<label for="diu">Diuréticos</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group10" value="Antiácidos" [(ngModel)]="selectedTratamiento"
-							inputId="ant"></p-checkbox>
-						<label for="ant">Antiácidos</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group10" value="Analgésicos" [(ngModel)]="selectedTratamiento"
-							inputId="ana"></p-checkbox>
-						<label for="ana">Analgésicos</label>
-					</div>
-				</div>
-				<br>
-
-				<div class="field grid align-items-center">
-					<label htmlFor="tra" class="col-12 mb-2 md:col-5 md:mb-0 "><b>Tratamientos homeopáticos,
-							psicológicos, otros:</b></label>
-					<div class="col-6 md:col-7">
-						<input pInputText id="tra" type="text" />
-					</div>
-				</div>
-				<div class="field grid">
-					<label htmlFor="medA" class="col-12 mb-2 md:col-3 md:mb-0"><b>Medicamentos alópatas:</b></label>
-					<div class="col-12 md:col-9">
-						<input pInputText id="medA" type="text" />
-					</div>
-				</div>
-				<div class="field grid">
-					<label htmlFor="medL" class="col-12 mb-2 md:col-3 md:mb-0"><b>Medicina alternativa:</b></label>
-					<div class="col-12 md:col-9">
-						<input pInputText id="medL" type="text" />
-					</div>
-				</div>
-			</p-tabPanel>
-
-
-			<p-tabPanel header="4">
-				<h1>Efectos de fármacos en el estado de nutrición</h1>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="gus"><b>Cambios en el gusto:</b></label>
-						<input pInputText id="gus" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="ape"><b>Cambios en el apetito:</b></label>
-						<input pInputText id="ape" type="text" />
-					</div>
-				</div>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="boca"><b>Boca seca:</b></label>
-						<input pInputText id="boca" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="nau"><b>Nauseas:</b></label>
-						<input pInputText id="nau" type="text" />
-					</div>
-				</div>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="diar"><b> Algún tipo de diarrea:</b></label>
-						<input pInputText id="diar" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="cons"><b>Constipación:</b></label>
-						<input pInputText id="cons" type="text" />
-					</div>
-				</div>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="hip"><b>Hiperglucemia:</b></label>
-						<input pInputText id="hip" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="mod"><b>Modificación de absorción de lípidos::</b></label>
-						<input pInputText id="mod" type="text" />
-					</div>
-				</div>
-
-				<div class="field grid">
-					<label htmlFor="den" class="col-12 mb-2 md:col-3 md:mb-0"><b>Dentadura completa:</b></label>
-					<div class="col-12 md:col-9">
-						<input pInputText id="den" type="text" />
-					</div>
-				</div>
-				<h4>Síntomas actuales</h4>
-				<div class="field grid">
-					<label htmlFor="baño" class="col-12 mb-2 md:col-3 md:mb-0"><b>¿Cuántas veces va al baño al
-							día?</b></label>
-					<div class="col-12 md:col-9">
-						<input pInputText id="baño" type="text" />
-					</div>
-				</div>
-
-				<div class="flex gap-5">
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group11" value="Diarrea" [(ngModel)]="selectedSintomas"
-							inputId="diarrea"></p-checkbox>
-						<label for="diarrea">Diarrea</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group11" value="Estreñimiento" [(ngModel)]="selectedSintomas"
-							inputId="est"></p-checkbox>
-						<label for="est">Estreñimiento</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group11" value="Gastritis" [(ngModel)]="selectedSintomas"
-							inputId="gastritis"></p-checkbox>
-						<label for="gastritis">Gastritis</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group11" value="Úlcera" [(ngModel)]="selectedSintomas"
-							inputId="ulcera"></p-checkbox>
-						<label for="ulcera">Úlcera</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group11" value="Náuseas" [(ngModel)]="selectedSintomas"
-							inputId="nauseas"></p-checkbox>
-						<label for="nauseas">Náuseas</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group11" value="Pirosis" [(ngModel)]="selectedSintomas"
-							inputId="pirosis"></p-checkbox>
-						<label for="pirosis">Pirosis</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group11" value="Vómito" [(ngModel)]="selectedSintomas"
-							inputId="vomito"></p-checkbox>
-						<label for="vomito">Vómito</label>
-					</div>
-					<div class="flex align-items-center gap-1">
-						<p-checkbox name="group11" value="Colitis" [(ngModel)]="selectedSintomas"
-							inputId="colitis"></p-checkbox>
-						<label for="colitis">Colitis</label>
-					</div>
-				</div>
-			</p-tabPanel>
-
-
-			<p-tabPanel header="5">
-				<h1>Antecedentes de problemas relacionadas con la nutrición</h1>
-				<div class="field">
-					<label htmlFor="pesoS"><b>¿En qué momento de su vida usted subió de peso?</b> </label>
-					<input pInputText id="pesoS" type="text" />
-				</div>
-				<div class="field">
-					<label htmlFor="pesoC"><b>¿Hace cuantos años, tuvo su cambio de peso?</b> </label>
-					<input pInputText id="pesoC" type="text" />
-				</div>
-				<div class="field">
-					<label htmlFor="dieta"><b>Dietas o tratamientos nutricios que ha realizado anteriormente:</b>
-					</label>
-					<input pInputText id="dieta" type="text" />
-				</div>
-				<div class="field">
-					<label htmlFor="tras"><b>Trastornos de alimentación:</b> </label>
-					<input pInputText id="tras" type="text" />
-				</div>
-			</p-tabPanel>
-
-
-			<p-tabPanel header="6">
-				<h1>Estilo de vida</h1>
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="cirugias"><b>Actividad física:</b></label>
-					<div class="flex align-items-center">
-						<p-radioButton name="group12" value="mLigera" [(ngModel)]="actividad"
-							inputId="mLigera"></p-radioButton>
-						<label for="mLigera" class="ml-2">Muy ligera</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group12" value="Ligera" [(ngModel)]="actividad"
-							inputId="ligera"></p-radioButton>
-						<label for="ligera" class="ml-2">Ligera</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group12" value="Moderada" [(ngModel)]="actividad"
-							inputId="moderada"></p-radioButton>
-						<label for="moderada" class="ml-2">Moderada</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group12" value="Pesada" [(ngModel)]="actividad"
-							inputId="pesada"></p-radioButton>
-						<label for="pesada" class="ml-2">Pesada</label>
-					</div>
-				</div>
-
-				<h4>Ejercicio</h4>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="tipo"><b>Tipo:</b></label>
-						<input pInputText id="tipo" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="fre"><b>Frecuencia:</b></label>
-						<input pInputText id="fre" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="veces"><b>Veces a la semana:</b></label>
-						<input pInputText id="veces" type="text" />
-					</div>
-				</div>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="dur"><b>Duración:</b></label>
-						<input pInputText id="dur" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="ini"><b>¿Cuándo inicio?</b></label>
-						<input pInputText id="ini" type="text" />
-					</div>
-				</div>
-
-				<h4>Indicadores dietéticos</h4>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="comidas"><b>¿Cuántas comidas hace al día?</b></label>
-						<input pInputText id="comidas" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="prepara"><b>¿Quién prepara sus alimentos?</b></label>
-						<input pInputText id="prepara" type="text" />
-					</div>
-				</div>
-
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="redical"><b>¿Recientemente (de 6 meses a la fecha) ha
-							experimentado algún cambio radical en su vida el cual haya influenciado
-							alteración en su estado anímico o su estilo de vida?:</b></label>
-					<div class="flex align-items-center">
-						<p-radioButton name="group13" value="Si" [(ngModel)]="estiloV" inputId="si"></p-radioButton>
-						<label for="si" class="ml-2">Si</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group13" value="No" [(ngModel)]="estiloV" inputId="no"></p-radioButton>
-						<label for="no" class="ml-2">No</label>
-					</div>
-				</div>
-
-				<br>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="porque"><b>¿Por qué?</b></label>
-						<input pInputText id="porque" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="como"><b>¿Cómo?</b></label>
-						<input pInputText id="como" type="text" />
-					</div>
-				</div>
-
-				<h4>Apetito</h4>
-				<div class="flex align-items-center gap-4">
-					<div class="flex align-items-center">
-						<p-radioButton name="group14" value="Bueno" [(ngModel)]="apetito" inputId="bueno"></p-radioButton>
-						<label for="bueno" class="ml-2">Bueno</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group14" value="Malo" [(ngModel)]="apetito" inputId="malo"></p-radioButton>
-						<label for="malo" class="ml-2">Malo</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group14" value="Regular" [(ngModel)]="apetito" inputId="regular"></p-radioButton>
-						<label for="regular" class="ml-2">Regular</label>
-					</div>
-				</div>
-
-				<br>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="masH"><b>¿A qué hora del día tienes más hambre?</b></label>
-						<input pInputText id="masH" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="menosH"><b>¿A qué hora tienes menos hambre?</b></label>
-						<input pInputText id="masH" type="text" />
-					</div>
-				</div>
-
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="preferidos"><b>Alimentos preferidos</b></label>
-						<textarea pInputTextarea id="preferidos" type="text" ></textarea>
-					</div>
-					<div class="field col">
-						<label htmlFor="noGustan"><b>Alimentos que no le gustan</b></label>
-						<textarea pInputTextarea id="noGustan" type="text" ></textarea>
-					</div>
-				</div>
-
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="tratamiento"><b>Ha llevado un tratamiento para control de peso:</b></label>
-					<div class="flex align-items-center">
-						<p-radioButton name="group15" value="Si" [(ngModel)]="controlPeso" inputId="si"></p-radioButton>
-						<label for="si" class="ml-2">Si</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group15" value="No" [(ngModel)]="controlPeso" inputId="no"></p-radioButton>
-						<label for="no" class="ml-2">No</label>
-					</div>
-				</div>
-				<br>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="veces"><b>¿Cuántas veces? </b></label>
-						<input pInputText id="veces" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="tipoD"><b>¿Qué tipo de dieta? </b></label>
-						<input pInputText id="tipoD" type="text" />
-					</div>
-				</div>
-				<div class="p-formgrid grid">
-					<div class="field col">
-						<label htmlFor="haceC"><b>¿Hace cuánto?</b></label>
-						<input pInputText id="haceC" type="text" />
-					</div>
-					<div class="field col">
-						<label htmlFor="razon"><b>¿Por qué razón?</b></label>
-						<input pInputText id="razon" type="text" />
-					</div>
-				</div>
-				<div class="field grid">
-					<label htmlFor="apego" class="col-12 mb-2 md:col-2 md:mb-0"><b>¿Qué tanto se apegó a ella?</b></label>
-					<div class="col-12 md:col-10">
-						<input pInputText id="apego" type="text" />
-					</div>
-				</div>
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="resultados"><b>Obtuvo los resultados esperados:</b></label>
-					<div class="flex align-items-center">
-						<p-radioButton name="group16" value="Si" [(ngModel)]="obtuvoResultado" inputId="si"></p-radioButton>
-						<label for="si" class="ml-2">Si</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group16" value="No" [(ngModel)]="obtuvoResultado" inputId="no"></p-radioButton>
-						<label for="no" class="ml-2">No</label>
-					</div>
-				</div>
-				<br>
-				<div class="flex align-items-center gap-4">
-					<label htmlFor="medB"><b>Ha utilizado medicamentos para bajar de peso:</b></label>
-					<div class="flex align-items-center">
-						<p-radioButton name="group17" value="Si" [(ngModel)]="medicamentosBajar" inputId="si"></p-radioButton>
-						<label for="si" class="ml-2">Si</label>
-					</div>
-					<div class="flex align-items-center">
-						<p-radioButton name="group17" value="No" [(ngModel)]="medicamentosBajar" inputId="no"></p-radioButton>
-						<label for="no" class="ml-2">No</label>
-					</div>
-				</div>
-				<br>
-				<div class="field grid">
-					<label htmlFor="cuales" class="col-12 mb-2 md:col-2 md:mb-0"><b>¿Cuáles?</b></label>
-					<div class="col-12 md:col-10">
-						<input pInputText id="cuales" type="text" />
-					</div>
-				</div>
-				<div class="field grid">
-					<label htmlFor="fluctuado" class="col-12 mb-2 md:col-2 md:mb-0"><b>¿Cómo ha fluctuado su peso a lo largo de su vida?</b></label>
-					<div class="col-12 md:col-10">
-						<input pInputText id="fluctuado" type="text" />
-					</div>
-				</div>
-				<div class="field grid">
-					<label htmlFor="sometidoC" class="col-12 mb-2 md:col-2 md:mb-0"><b>¿Se ha sometido a alguna cirugía para perder peso?</b></label>
-					<div class="col-12 md:col-10">
-						<input pInputText id="sometidoC" type="text" />
-					</div>
-				</div>
-				<div class="field grid">
-					<label htmlFor="agua" class="col-12 mb-2 md:col-2 md:mb-0"><b>Consumo regular de agua simple al día:</b></label>
-					<div class="col-12 md:col-10">
-						<input pInputText id="agua" type="text" />
-					</div>
-				</div>
-			</p-tabPanel>
-		</p-tabView>
-
-		<div style="display: flex; justify-content: center;">
-			<button pButton pRipple class="p-button-rounded p-button-warning" (click)="guardarExp" style="width: 100px; height: 40px;"><b>Guardar</b></button>
-		</div>
-		
-	</p-dialog>
-
 
 
 	<p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
 		<div class="flex align-items-center justify-content-center">
 			<i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-			<span *ngIf="product">¿Desea eliminar el paciente?<b>{{product.name}}</b>?</span>
+			<span *ngIf="product">¿Confirma que desea eliminar a <b>{{product.name}}</b>?</span>
 		</div>
 		<ng-template pTemplate="footer">
 			<button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
-				(click)="deleteProductDialog = false"></button>
+				(click)="deletePacientetDialog = false"></button>
 			<button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
 				(click)="confirmDelete()"></button>
 		</ng-template>
 	</p-dialog>
 
+
+
+
+
+
+
+	<!-- EXPEDIENTE -->
+	<p-dialog [(visible)]="expedienteDialog" [style]="{width: 'auto'}" header="Expediente" [modal]="true"
+		class="p-fluid">
+
+		<h1>Antecedentes médicos</h1>
+		<div class="field">
+			<label htmlFor="name1"><b>Motivo de consulta:</b> </label>
+			<input pInputText id="motivo" type="text" />
+		</div>
+		<div class="field">
+			<label htmlFor="email1"><b>Dx médico y estado de salud actual:</b> </label>
+			<input pInputText id="Dx" type="text" />
+		</div>
+
+		<h4>Antecedentes personales patológicos</h4>
+		<b>Enfermedades infecciosas:</b>
+		<div class=" flex  gap-7">
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group1" value="Hepatitis" [(ngModel)]="selectedInfecciosas"
+					inputId="hep"></p-checkbox>
+				<label for="hep">Hepatitis</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group1" value="Varicela" [(ngModel)]="selectedInfecciosas" inputId="var"></p-checkbox>
+				<label for="var">Varicela</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group1" value="Sarampion" [(ngModel)]="selectedInfecciosas"
+					inputId="sar"></p-checkbox>
+				<label for="sar">Sarampión</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group1" value="Rubeola" [(ngModel)]="selectedInfecciosas" inputId="rub"></p-checkbox>
+				<label for="rub">Rubeola</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<label htmlFor="otro1" class="col-6 mb-2 md:col-2 md:mb-0">Otro:</label>
+				<div class="col-12 md:col-10">
+					<input pInputText id="otro1" type="text" />
+				</div>
+			</div>
+		</div>
+
+		<b>Enfermedades crónicas:</b>
+		<div class="flex  gap-7">
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group2" value="Diabetes" [(ngModel)]="selectedCronicas" inputId="dia"></p-checkbox>
+				<label for="dia">Diabetes</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group2" value="HTA" [(ngModel)]="selectedCronicas" inputId="hta"></p-checkbox>
+				<label for="hta">HTA</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group2" value="Oncológicos" [(ngModel)]="selectedCronicas" inputId="onc"></p-checkbox>
+				<label for="onc">Oncológicos</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group2" value="Hipo/hipertiroidismo" [(ngModel)]="selectedCronicas"
+					inputId="hh"></p-checkbox>
+				<label for="hh">Hipo/hipertiroidismo</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group2" value="SOP" [(ngModel)]="selectedCronicas" inputId="sop"></p-checkbox>
+				<label for="sop">SOP</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<label htmlFor="otro2" class="col-6 mb-2 md:col-2 md:mb-0">Otro:</label>
+				<div class="col-12 md:col-10">
+					<input pInputText id="otro2" type="text" />
+				</div>
+			</div>
+		</div>
+
+		<b>Consumo:</b>
+		<div class="flex gap-8">
+			<div class="flex align-items-center gap-3">
+				<p-checkbox name="group3" value="Tabaco" [(ngModel)]="selectedConsumo" inputId="dia"></p-checkbox>
+				<label for="dia">Tabaco</label>
+			</div>
+			<div class="flex align-items-center gap-3">
+				<p-checkbox name="group3" value="Alcohol" [(ngModel)]="selectedConsumo" inputId="hta"></p-checkbox>
+				<label for="hta">Alcohol</label>
+			</div>
+			<div class="flex align-items-center gap-3">
+				<p-checkbox name="group3" value="Alguna droga" [(ngModel)]="selectedConsumo" inputId="onc"></p-checkbox>
+				<label for="onc">Alguna droga</label>
+			</div>
+			<div class="flex align-items-center gap-3">
+				<label htmlFor="cual1" class="col-6 mb-2 md:col-2 md:mb-0">¿Cuál?:</label>
+				<div class="col-12 md:col-10">
+					<input pInputText id="cual1" type="text" />
+				</div>
+			</div>
+		</div>
+
+		<div class="field">
+			<label htmlFor="alergias"><b>Alergias:</b></label>
+			<input pInputText id="alergias" type="text" />
+		</div>
+
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="cirugias"><b>Cirugías:</b></label>
+			<div class="flex align-items-center">
+				<p-radioButton name="group4" value="Si" [(ngModel)]="cirugias" inputId="si"></p-radioButton>
+				<label for="si" class="ml-2">Si</label>
+			</div>
+
+			<div class="flex align-items-center">
+				<p-radioButton name="group4" value="No" [(ngModel)]="cirugias" inputId="no"></p-radioButton>
+				<label for="no" class="ml-2">No</label>
+			</div>
+		</div>
+
+
+		<h1>Antecedentes gineco obstétricos</h1>
+		<div class="flex gap-5">
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group5" value="Embarazos" [(ngModel)]="selectedGineco" inputId="emb"></p-checkbox>
+				<label for="emb">Embarazos</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group5" value="Aborto" [(ngModel)]="selectedGineco" inputId="abo"></p-checkbox>
+				<label for="abo">Aborto</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group5" value="Parto" [(ngModel)]="selectedGineco" inputId="par"></p-checkbox>
+				<label for="par">Parto</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group5" value="Cesárea" [(ngModel)]="selectedGineco" inputId="ces"></p-checkbox>
+				<label for="ces">Cesárea</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group5" value="Nada" [(ngModel)]="selectedGineco" inputId="nad"></p-checkbox>
+				<label for="nad">Nada</label>
+			</div>
+		</div>
+
+		<br>
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="cirugias"><b>Períodos menstruales:</b></label>
+
+			<div class="flex align-items-center">
+				<p-radioButton name="group6" value="Regulares" [(ngModel)]="periodo" inputId="reg"></p-radioButton>
+				<label for="reg" class="ml-2">Regulares</label>
+			</div>
+
+			<div class="flex align-items-center">
+				<p-radioButton name="group6" value="Irregulares" [(ngModel)]="periodo" inputId="irr"></p-radioButton>
+				<label for="irr" class="ml-2">Irregulares</label>
+			</div>
+		</div>
+		<br>
+
+		<div class="field grid align-items-center">
+			<label htmlFor="san" class="col-12 mb-2 md:col-5 md:mb-0 "><b>Días que dura el sangrado:</b></label>
+			<div class="col-6 md:col-7">
+				<input pInputText id="san" type="text" />
+			</div>
+		</div>
+
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="cirugias"><b>Uso de anticonceptivos:</b></label>
+			<div class="flex align-items-center">
+				<p-radioButton name="group7" value="Si" [(ngModel)]="anticonceptivos" inputId="si"></p-radioButton>
+				<label for="si" class="ml-2">Si</label>
+			</div>
+
+			<div class="flex align-items-center">
+				<p-radioButton name="group7" value="No" [(ngModel)]="anticonceptivos" inputId="no"></p-radioButton>
+				<label for="no" class="ml-2">No</label>
+			</div>
+		</div>
+
+		<br>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="cual2"><b>¿Cuáles?:</b></label>
+				<input pInputText id="cual2" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="dos"><b>Dosis:</b></label>
+				<input pInputText id="dos" type="text" />
+			</div>
+		</div>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="tie"><b>Tiempo usándolos:</b></label>
+				<input pInputText id="tie" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="controlados"><b>¿Son controlados?</b></label>
+				<input pInputText id="controlados" type="text" />
+			</div>
+		</div>
+
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="clim"><b>Climaterio:</b></label>
+			<div class="flex align-items-center">
+				<p-radioButton name="group8" value="Si" [(ngModel)]="climaterio" inputId="si"></p-radioButton>
+				<label for="si" class="ml-2">Si</label>
+			</div>
+
+			<div class="flex align-items-center">
+				<p-radioButton name="group8" value="No" [(ngModel)]="climaterio" inputId="no"></p-radioButton>
+				<label for="no" class="ml-2">No</label>
+			</div>
+			<div class="flex align-items-center gap-3">
+				<label htmlFor="fecha" class="col-6 mb-2 md:col-2 md:mb-0"><b>Fecha:</b></label>
+				<div class="col-12 md:col-10">
+					<input pInputText id="fecha" type="text" />
+				</div>
+			</div>
+		</div>
+
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="hor"><b>Terapia de remplazo hormonal:</b></label>
+			<div class="flex align-items-center">
+				<p-radioButton name="group9" value="Si" [(ngModel)]="hormonal" inputId="si"></p-radioButton>
+				<label for="si" class="ml-2">Si</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group9" value="No" [(ngModel)]="hormonal" inputId="no"></p-radioButton>
+				<label for="no" class="ml-2">No</label>
+			</div>
+		</div>
+		<br>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="dos2"><b>Dosis:</b></label>
+				<input pInputText id="dos2" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="nomH"><b>Nombre:</b></label>
+				<input pInputText id="nomH" type="text" />
+			</div>
+		</div>
+
+
+		<h1>Tratamiento</h1>
+		<div class="flex gap-5">
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group10" value="Toma laxantes" [(ngModel)]="selectedTratamiento"
+					inputId="lax"></p-checkbox>
+				<label for="lax">Toma laxantes</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group10" value="Diuréticos" [(ngModel)]="selectedTratamiento"
+					inputId="diu"></p-checkbox>
+				<label for="diu">Diuréticos</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group10" value="Antiácidos" [(ngModel)]="selectedTratamiento"
+					inputId="ant"></p-checkbox>
+				<label for="ant">Antiácidos</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group10" value="Analgésicos" [(ngModel)]="selectedTratamiento"
+					inputId="ana"></p-checkbox>
+				<label for="ana">Analgésicos</label>
+			</div>
+		</div>
+		<br>
+
+		<div class="field grid align-items-center">
+			<label htmlFor="tra" class="col-12 mb-2 md:col-5 md:mb-0 "><b>Tratamientos homeopáticos,
+					psicológicos, otros:</b></label>
+			<div class="col-6 md:col-7">
+				<input pInputText id="tra" type="text" />
+			</div>
+		</div>
+		<div class="field grid">
+			<label htmlFor="medA" class="col-12 mb-2 md:col-3 md:mb-0"><b>Medicamentos alópatas:</b></label>
+			<div class="col-12 md:col-9">
+				<input pInputText id="medA" type="text" />
+			</div>
+		</div>
+		<div class="field grid">
+			<label htmlFor="medL" class="col-12 mb-2 md:col-3 md:mb-0"><b>Medicina alternativa:</b></label>
+			<div class="col-12 md:col-9">
+				<input pInputText id="medL" type="text" />
+			</div>
+		</div>
+
+
+		<h1>Efectos de fármacos en el estado de nutrición</h1>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="gus"><b>Cambios en el gusto:</b></label>
+				<input pInputText id="gus" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="ape"><b>Cambios en el apetito:</b></label>
+				<input pInputText id="ape" type="text" />
+			</div>
+		</div>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="boca"><b>Boca seca:</b></label>
+				<input pInputText id="boca" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="nau"><b>Nauseas:</b></label>
+				<input pInputText id="nau" type="text" />
+			</div>
+		</div>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="diar"><b> Algún tipo de diarrea:</b></label>
+				<input pInputText id="diar" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="cons"><b>Constipación:</b></label>
+				<input pInputText id="cons" type="text" />
+			</div>
+		</div>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="hip"><b>Hiperglucemia:</b></label>
+				<input pInputText id="hip" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="mod"><b>Modificación de absorción de lípidos::</b></label>
+				<input pInputText id="mod" type="text" />
+			</div>
+		</div>
+
+		<div class="field grid">
+			<label htmlFor="den" class="col-12 mb-2 md:col-3 md:mb-0"><b>Dentadura completa:</b></label>
+			<div class="col-12 md:col-9">
+				<input pInputText id="den" type="text" />
+			</div>
+		</div>
+		<h4>Síntomas actuales</h4>
+		<div class="field grid">
+			<label htmlFor="baño" class="col-12 mb-2 md:col-3 md:mb-0"><b>¿Cuántas veces va al baño al
+					día?</b></label>
+			<div class="col-12 md:col-9">
+				<input pInputText id="baño" type="text" />
+			</div>
+		</div>
+
+		<div class="flex gap-5">
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group11" value="Diarrea" [(ngModel)]="selectedSintomas"
+					inputId="diarrea"></p-checkbox>
+				<label for="diarrea">Diarrea</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group11" value="Estreñimiento" [(ngModel)]="selectedSintomas"
+					inputId="est"></p-checkbox>
+				<label for="est">Estreñimiento</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group11" value="Gastritis" [(ngModel)]="selectedSintomas"
+					inputId="gastritis"></p-checkbox>
+				<label for="gastritis">Gastritis</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group11" value="Úlcera" [(ngModel)]="selectedSintomas" inputId="ulcera"></p-checkbox>
+				<label for="ulcera">Úlcera</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group11" value="Náuseas" [(ngModel)]="selectedSintomas"
+					inputId="nauseas"></p-checkbox>
+				<label for="nauseas">Náuseas</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group11" value="Pirosis" [(ngModel)]="selectedSintomas"
+					inputId="pirosis"></p-checkbox>
+				<label for="pirosis">Pirosis</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group11" value="Vómito" [(ngModel)]="selectedSintomas" inputId="vomito"></p-checkbox>
+				<label for="vomito">Vómito</label>
+			</div>
+			<div class="flex align-items-center gap-1">
+				<p-checkbox name="group11" value="Colitis" [(ngModel)]="selectedSintomas"
+					inputId="colitis"></p-checkbox>
+				<label for="colitis">Colitis</label>
+			</div>
+		</div>
+
+
+		<h1>Antecedentes de problemas relacionadas con la nutrición</h1>
+		<div class="field">
+			<label htmlFor="pesoS"><b>¿En qué momento de su vida usted subió de peso?</b> </label>
+			<input pInputText id="pesoS" type="text" />
+		</div>
+		<div class="field">
+			<label htmlFor="pesoC"><b>¿Hace cuantos años, tuvo su cambio de peso?</b> </label>
+			<input pInputText id="pesoC" type="text" />
+		</div>
+		<div class="field">
+			<label htmlFor="dieta"><b>Dietas o tratamientos nutricios que ha realizado anteriormente:</b>
+			</label>
+			<input pInputText id="dieta" type="text" />
+		</div>
+		<div class="field">
+			<label htmlFor="tras"><b>Trastornos de alimentación:</b> </label>
+			<input pInputText id="tras" type="text" />
+		</div>
+
+
+		<h1>Estilo de vida</h1>
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="cirugias"><b>Actividad física:</b></label>
+			<div class="flex align-items-center">
+				<p-radioButton name="group12" value="mLigera" [(ngModel)]="actividad" inputId="mLigera"></p-radioButton>
+				<label for="mLigera" class="ml-2">Muy ligera</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group12" value="Ligera" [(ngModel)]="actividad" inputId="ligera"></p-radioButton>
+				<label for="ligera" class="ml-2">Ligera</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group12" value="Moderada" [(ngModel)]="actividad"
+					inputId="moderada"></p-radioButton>
+				<label for="moderada" class="ml-2">Moderada</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group12" value="Pesada" [(ngModel)]="actividad" inputId="pesada"></p-radioButton>
+				<label for="pesada" class="ml-2">Pesada</label>
+			</div>
+		</div>
+
+		<h4>Ejercicio</h4>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="tipo"><b>Tipo:</b></label>
+				<input pInputText id="tipo" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="fre"><b>Frecuencia:</b></label>
+				<input pInputText id="fre" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="veces"><b>Veces a la semana:</b></label>
+				<input pInputText id="veces" type="text" />
+			</div>
+		</div>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="dur"><b>Duración:</b></label>
+				<input pInputText id="dur" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="ini"><b>¿Cuándo inicio?</b></label>
+				<input pInputText id="ini" type="text" />
+			</div>
+		</div>
+
+		<h4>Indicadores dietéticos</h4>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="comidas"><b>¿Cuántas comidas hace al día?</b></label>
+				<input pInputText id="comidas" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="prepara"><b>¿Quién prepara sus alimentos?</b></label>
+				<input pInputText id="prepara" type="text" />
+			</div>
+		</div>
+
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="redical"><b>¿Recientemente (de 6 meses a la fecha) ha
+					experimentado algún cambio radical en su vida el cual haya influenciado
+					alteración en su estado anímico o su estilo de vida?:</b></label>
+			<div class="flex align-items-center">
+				<p-radioButton name="group13" value="Si" [(ngModel)]="estiloV" inputId="si"></p-radioButton>
+				<label for="si" class="ml-2">Si</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group13" value="No" [(ngModel)]="estiloV" inputId="no"></p-radioButton>
+				<label for="no" class="ml-2">No</label>
+			</div>
+		</div>
+
+		<br>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="porque"><b>¿Por qué?</b></label>
+				<input pInputText id="porque" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="como"><b>¿Cómo?</b></label>
+				<input pInputText id="como" type="text" />
+			</div>
+		</div>
+
+		<h4>Apetito</h4>
+		<div class="flex align-items-center gap-4">
+			<div class="flex align-items-center">
+				<p-radioButton name="group14" value="Bueno" [(ngModel)]="apetito" inputId="bueno"></p-radioButton>
+				<label for="bueno" class="ml-2">Bueno</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group14" value="Malo" [(ngModel)]="apetito" inputId="malo"></p-radioButton>
+				<label for="malo" class="ml-2">Malo</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group14" value="Regular" [(ngModel)]="apetito" inputId="regular"></p-radioButton>
+				<label for="regular" class="ml-2">Regular</label>
+			</div>
+		</div>
+
+		<br>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="masH"><b>¿A qué hora del día tienes más hambre?</b></label>
+				<input pInputText id="masH" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="menosH"><b>¿A qué hora tienes menos hambre?</b></label>
+				<input pInputText id="masH" type="text" />
+			</div>
+		</div>
+
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="preferidos"><b>Alimentos preferidos</b></label>
+				<textarea pInputTextarea id="preferidos" type="text"></textarea>
+			</div>
+			<div class="field col">
+				<label htmlFor="noGustan"><b>Alimentos que no le gustan</b></label>
+				<textarea pInputTextarea id="noGustan" type="text"></textarea>
+			</div>
+		</div>
+
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="tratamiento"><b>Ha llevado un tratamiento para control de peso:</b></label>
+			<div class="flex align-items-center">
+				<p-radioButton name="group15" value="Si" [(ngModel)]="controlPeso" inputId="si"></p-radioButton>
+				<label for="si" class="ml-2">Si</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group15" value="No" [(ngModel)]="controlPeso" inputId="no"></p-radioButton>
+				<label for="no" class="ml-2">No</label>
+			</div>
+		</div>
+		<br>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="veces"><b>¿Cuántas veces? </b></label>
+				<input pInputText id="veces" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="tipoD"><b>¿Qué tipo de dieta? </b></label>
+				<input pInputText id="tipoD" type="text" />
+			</div>
+		</div>
+		<div class="p-formgrid grid">
+			<div class="field col">
+				<label htmlFor="haceC"><b>¿Hace cuánto?</b></label>
+				<input pInputText id="haceC" type="text" />
+			</div>
+			<div class="field col">
+				<label htmlFor="razon"><b>¿Por qué razón?</b></label>
+				<input pInputText id="razon" type="text" />
+			</div>
+		</div>
+		<div class="field grid">
+			<label htmlFor="apego" class="col-12 mb-2 md:col-2 md:mb-0"><b>¿Qué tanto se apegó a ella?</b></label>
+			<div class="col-12 md:col-10">
+				<input pInputText id="apego" type="text" />
+			</div>
+		</div>
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="resultados"><b>Obtuvo los resultados esperados:</b></label>
+			<div class="flex align-items-center">
+				<p-radioButton name="group16" value="Si" [(ngModel)]="obtuvoResultado" inputId="si"></p-radioButton>
+				<label for="si" class="ml-2">Si</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group16" value="No" [(ngModel)]="obtuvoResultado" inputId="no"></p-radioButton>
+				<label for="no" class="ml-2">No</label>
+			</div>
+		</div>
+		<br>
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="medB"><b>Ha utilizado medicamentos para bajar de peso:</b></label>
+			<div class="flex align-items-center">
+				<p-radioButton name="group17" value="Si" [(ngModel)]="medicamentosBajar" inputId="si"></p-radioButton>
+				<label for="si" class="ml-2">Si</label>
+			</div>
+			<div class="flex align-items-center">
+				<p-radioButton name="group17" value="No" [(ngModel)]="medicamentosBajar" inputId="no"></p-radioButton>
+				<label for="no" class="ml-2">No</label>
+			</div>
+		</div>
+		<br>
+		<div class="field grid">
+			<label htmlFor="cuales" class="col-12 mb-2 md:col-2 md:mb-0"><b>¿Cuáles?</b></label>
+			<div class="col-12 md:col-10">
+				<input pInputText id="cuales" type="text" />
+			</div>
+		</div>
+		<div class="field grid">
+			<label htmlFor="fluctuado" class="col-12 mb-2 md:col-2 md:mb-0"><b>¿Cómo ha fluctuado su peso a lo largo de
+					su vida?</b></label>
+			<div class="col-12 md:col-10">
+				<input pInputText id="fluctuado" type="text" />
+			</div>
+		</div>
+		<div class="field grid">
+			<label htmlFor="sometidoC" class="col-12 mb-2 md:col-2 md:mb-0"><b>¿Se ha sometido a alguna cirugía para
+					perder peso?</b></label>
+			<div class="col-12 md:col-10">
+				<input pInputText id="sometidoC" type="text" />
+			</div>
+		</div>
+		<div class="field grid">
+			<label htmlFor="agua" class="col-12 mb-2 md:col-2 md:mb-0"><b>Consumo regular de agua simple al
+					día:</b></label>
+			<div class="col-12 md:col-10">
+				<input pInputText id="agua" type="text" />
+			</div>
+		</div>
+
+		<div style="display: flex; justify-content: center;">
+			<button pButton pRipple class="p-button-rounded p-button-warning" (click)="guardarExp"
+				style="width: 100px; height: 40px;"><b>Guardar</b></button>
+		</div>
+	</p-dialog>
+
+
+
+ <p-dialog [(visible)]="medidasDialog" [style]="{width: '700'}" header="Medidas" [modal]="true" class="p-fluid">
+	 <p-tabView [activeIndex]="activeTabIndex">
+			<p-tabPanel header="1">
+				<h2>Medidas de Consulta</h2>
+				<div class="formgrid mb-3">
+					<span class="block mb-2">Peso Adentro</span>
+					<p-inputNumber inputId="peso"> </p-inputNumber>
+				</div>
+				<div class="formgrid mb-3">
+					<span class="block mb-2">Talla Adentro</span>
+					<p-inputNumber inputId="talla"> </p-inputNumber>
+				</div>
+				<div class="formgrid mb-3">
+					<span class="block mb-2">Talla Sentado</span>
+					<p-inputNumber inputId="tallasz"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<span class="block mb-2">Carpo</span>
+					<p-inputNumber inputId="cpo"> </p-inputNumber>
+				</div>
+
+				<h2>Medidas Afuera</h2>
+				<div class="field">
+					<label htmlFor="peso"><b>Peso afuera</b> </label>
+					<p-inputNumber inputId="peso"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="talla"><b>Talla afuera</b> </label>
+					<p-inputNumber inputId="talla"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="FC"><b>Fecuencia Cardiaca</b> </label>
+					<p-inputNumber inputId="FC"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="carpo"><b>Carpo</b> </label>
+					<p-inputNumber inputId="carpo"> </p-inputNumber>
+				</div>
+
+				<div class="field">
+					<label htmlFor="talla"><b>Temperatura</b> </label>
+					<p-inputNumber prefix="↑ " inputId="temperatura" suffix="℃" [min]="0" [max]="40">
+					</p-inputNumber>
+				</div>
+			</p-tabPanel>
+
+			<p-tabPanel header="2">
+				<h2>Medidas músculos normales</h2>
+				<div class="field">
+					<label htmlFor="B"><b>Bicep</b> </label>
+					<p-inputNumber inputId="bicep"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Tr"><b>Tricep</b> </label>
+					<p-inputNumber inputId="Tr"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Se"><b>Subescapular</b> </label>
+					<p-inputNumber inputId="Se"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="carpo"><b>Supriliaco</b> </label>
+					<p-inputNumber inputId="Spr"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Ab"><b>Abdomen</b> </label>
+					<p-inputNumber inputId="Ab"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Mslo"><b>Muslo</b> </label>
+					<p-inputNumber inputId="Mslo"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Gem"><b>Gemelo</b> </label>
+					<p-inputNumber inputId="Gem"> </p-inputNumber>
+				</div>
+			</p-tabPanel>
+
+
+				<p-tabPanel header="3">
+					<h2>Medidas músculos relajados</h2>
+					<div class="field">
+						<label htmlFor="Br"><b>Bícep relajado</b> </label>
+						<p-inputNumber inputId="Br"> </p-inputNumber>
+					</div>
+					<div class="field">
+						<label htmlFor="Bc"><b>Bícep contraido</b> </label>
+						<p-inputNumber inputId="Bc"> </p-inputNumber>
+					</div>
+					<div class="field">
+						<label htmlFor="ant"><b>antebrazo</b> </label>
+						<p-inputNumber inputId="ant"> </p-inputNumber>
+					</div>
+					<div class="field">
+						<label htmlFor="Mslo"><b>muslo</b> </label>
+						<p-inputNumber inputId="Mslo"> </p-inputNumber>
+					</div>
+					<div class="field">
+						<label htmlFor="Gem"><b>gemelo</b> </label>
+						<p-inputNumber inputId="Gem"> </p-inputNumber>
+					</div>
+					<div class="field">
+						<label htmlFor="Tx"><b>torax</b> </label>
+						<p-inputNumber inputId="Tx"> </p-inputNumber>
+					</div>
+					<div class="field">
+						<label htmlFor="Glt"><b>gluteo</b> </label>
+						<p-inputNumber inputId="Glt"> </p-inputNumber>
+					</div>
+				</p-tabPanel>
+
+				<p-tabPanel header="4">
+				<h2>Medidas Óseas generales</h2>
+				<div class="field">
+					<label htmlFor="Bcr"><b>Biacromial</b> </label>
+					<p-inputNumber inputId="Bcr"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Btr"><b>Bitrocanter</b> </label>
+					<p-inputNumber inputId="Btr"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Bl"><b>Biliaco</b> </label>
+					<p-inputNumber inputId="Bl"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Tx"><b>Torax</b> </label>
+					<p-inputNumber inputId="Tx"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Hum"><b>Humero</b> </label>
+					<p-inputNumber inputId="Hum"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="carpo"><b>Carpo</b> </label>
+					<p-inputNumber inputId="carpo"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Fm"><b>Femur</b> </label>
+					<p-inputNumber inputId="Fm"> </p-inputNumber>
+				</div>
+				<div class="field">
+					<label htmlFor="Tb"><b>Tobillo</b> </label>
+					<p-inputNumber inputId="Tb"> </p-inputNumber>
+				</div>
+			     </p-tabPanel>
+
+				 <div style="display: flex; justify-content: center;">
+					<button pButton pRipple class="p-button-rounded p-button-warning" (click)="guardarMedidas" style="width: 100px; height: 40px;"><b>Guardar</b></button>
+				</div>
+		</p-tabView>
+    </p-dialog>
 </div>

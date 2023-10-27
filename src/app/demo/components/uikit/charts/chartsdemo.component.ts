@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
+import { DataView } from 'primeng/dataview';
 
 @Component({
     templateUrl: './chartsdemo.component.html'
@@ -11,21 +12,10 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
 
     barData: any;
 
-    pieData: any;
-
-    polarData: any;
-
-    radarData: any;
-
     lineOptions: any;
 
     barOptions: any;
 
-    pieOptions: any;
-
-    polarOptions: any;
-
-    radarOptions: any;
 
     subscription: Subscription;
 
@@ -39,6 +29,11 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
         this.initCharts();
     }
 
+    onFilter(dv: DataView, event: Event) {
+        dv.filter((event.target as HTMLInputElement).value);
+    }
+
+
     initCharts() {
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
@@ -46,19 +41,19 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
         
         this.barData = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
             datasets: [
                 {
-                    label: 'My First dataset',
+                    label: 'Peso primer cita',
                     backgroundColor: documentStyle.getPropertyValue('--primary-500'),
                     borderColor: documentStyle.getPropertyValue('--primary-500'),
-                    data: [65, 59, 80, 81, 56, 55, 40]
+                    data: [75, 59, 80, 81, 56, 64, 51]
                 },
                 {
-                    label: 'My Second dataset',
+                    label: 'Peso segunda cita',
                     backgroundColor: documentStyle.getPropertyValue('--primary-200'),
                     borderColor: documentStyle.getPropertyValue('--primary-200'),
-                    data: [28, 48, 40, 19, 86, 27, 90]
+                    data: [, 71, 40, 55, 86, 67, 90]
                 }
             ]
         };
@@ -96,40 +91,15 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
             }
         };
 
-        this.pieData = {
-            labels: ['A', 'B', 'C'],
-            datasets: [
-                {
-                    data: [540, 325, 702],
-                    backgroundColor: [
-                        documentStyle.getPropertyValue('--indigo-500'),
-                        documentStyle.getPropertyValue('--purple-500'),
-                        documentStyle.getPropertyValue('--teal-500')
-                    ],
-                    hoverBackgroundColor: [
-                        documentStyle.getPropertyValue('--indigo-400'),
-                        documentStyle.getPropertyValue('--purple-400'),
-                        documentStyle.getPropertyValue('--teal-400')
-                    ]
-                }]
-        };
+       
 
-        this.pieOptions = {
-            plugins: {
-                legend: {
-                    labels: {
-                        usePointStyle: true,
-                        color: textColor
-                    }
-                }
-            }
-        };
+       
 
         this.lineData = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            labels: ['Enero', 'Febrrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
             datasets: [
                 {
-                    label: 'First Dataset',
+                    label: 'Primer cita',
                     data: [65, 59, 80, 81, 56, 55, 40],
                     fill: false,
                     backgroundColor: documentStyle.getPropertyValue('--primary-500'),
@@ -137,8 +107,8 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
                     tension: .4
                 },
                 {
-                    label: 'Second Dataset',
-                    data: [28, 48, 40, 19, 86, 27, 90],
+                    label: 'Tercera cita',
+                    data: [56, 65, 97, 48, 51, 27, 80],
                     fill: false,
                     backgroundColor: documentStyle.getPropertyValue('--primary-200'),
                     borderColor: documentStyle.getPropertyValue('--primary-200'),
@@ -177,87 +147,6 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
             }
         };
 
-        this.polarData = {
-            datasets: [{
-                data: [
-                    11,
-                    16,
-                    7,
-                    3
-                ],
-                backgroundColor: [
-                    documentStyle.getPropertyValue('--indigo-500'),
-                    documentStyle.getPropertyValue('--purple-500'),
-                    documentStyle.getPropertyValue('--teal-500'),
-                    documentStyle.getPropertyValue('--orange-500')
-                ],
-                label: 'My dataset'
-            }],
-            labels: [
-                'Indigo',
-                'Purple',
-                'Teal',
-                'Orange'
-            ]
-        };
-
-        this.polarOptions = {
-            plugins: {
-                legend: {
-                    labels: {
-                        color: textColor
-                    }
-                }
-            },
-            scales: {
-                r: {
-                    grid: {
-                        color: surfaceBorder
-                    }
-                }
-            }
-        };
-
-        this.radarData = {
-            labels: ['Eating', 'Drinking', 'Sleeping', 'Designing', 'Coding', 'Cycling', 'Running'],
-            datasets: [
-                {
-                    label: 'My First dataset',
-                    borderColor: documentStyle.getPropertyValue('--indigo-400'),
-                    pointBackgroundColor: documentStyle.getPropertyValue('--indigo-400'),
-                    pointBorderColor: documentStyle.getPropertyValue('--indigo-400'),
-                    pointHoverBackgroundColor: textColor,
-                    pointHoverBorderColor: documentStyle.getPropertyValue('--indigo-400'),
-                    data: [65, 59, 90, 81, 56, 55, 40]
-                },
-                {
-                    label: 'My Second dataset',
-                    borderColor: documentStyle.getPropertyValue('--purple-400'),
-                    pointBackgroundColor: documentStyle.getPropertyValue('--purple-400'),
-                    pointBorderColor: documentStyle.getPropertyValue('--purple-400'),
-                    pointHoverBackgroundColor: textColor,
-                    pointHoverBorderColor: documentStyle.getPropertyValue('--purple-400'),
-                    data: [28, 48, 40, 19, 96, 27, 100]
-                }
-            ]
-        };
-
-        this.radarOptions = {
-            plugins: {
-                legend: {
-                    labels: {
-                        fontColor: textColor
-                    }
-                }
-            },
-            scales: {
-                r: {
-                    grid: {
-                        color: textColorSecondary
-                    }
-                }
-            }
-        };
     }
 
     ngOnDestroy() {

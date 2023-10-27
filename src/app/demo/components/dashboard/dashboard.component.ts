@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { DataView } from 'primeng/dataview';
 import { Product } from 'src/app/demo/api/product';
 import { ProductService } from 'src/app/demo/service/product.service';
-
 import { MessageService } from 'primeng/api';
 
 @Component({
-    templateUrl: './dashboard.component.html',
+    templateUrl:'./dashboard.component.html',
     providers: [MessageService]
 
 })
@@ -25,7 +24,10 @@ export class DashboardComponent implements OnInit {
 
     cols: any[] = [];
 
-    expedienteDialog: boolean = false
+    expedienteDialog: boolean = false;
+
+    medidasDialog: boolean = false
+
 
     constructor(private productService: ProductService, private messageService: MessageService) { }
 
@@ -38,6 +40,8 @@ export class DashboardComponent implements OnInit {
             { field: 'category', header: 'Category' },
             { field: 'rating', header: 'Reviews' },
             { field: 'inventoryStatus', header: 'Status' },
+           
+
         ];
        
     }
@@ -45,14 +49,36 @@ export class DashboardComponent implements OnInit {
 
     activeTabIndex: number =0;
 
+    confirmDelete() {
+        this.deleteProductDialog = false;
+        this.products = this.products.filter(val => val.id !== this.product.id);
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+        this.product = {};
+    }
+
+    editPaciente(product: Product) {
+        this.product = { ...product };
+        this.productDialog = true;
+    }
+
     openExp() {
         this.submitted = false;
         this.expedienteDialog = true;
     }
 
+    openMed() {
+        this.submitted = false;
+        this.medidasDialog = true;
+    }
+
     cerrarDialog() {
         this.expedienteDialog = false;
         this.submitted = false;
+    }
+
+
+    guardarMedidas(){
+       
     }
 
     guardarExp(){
