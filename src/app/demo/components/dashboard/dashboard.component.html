@@ -2,14 +2,11 @@
 	<div class="col-12">
 		<div class="card  px-6 py-6">
 			<h5>Pacientes</h5>
-			<!-- <p-dataView #dv [value]="products" [paginator]="true" [rows]="9" filterBy="name" [sortField]="sortField" [sortOrder]="sortOrder" layout="grid"> -->
-
+			
 			<p-toolbar styleClass="mb-4">
 				<ng-template pTemplate="left">
 					<div class="flex flex-column md:flex-row md:justify-content-between gap-2">
-						<button pButton pRipple type="button" label="Nuevo" icon="pi pi-plus" class="p-button-success"
-							(click)="openNew()"></button>
-
+						<button pButton pRipple type="button" label="Nuevo" icon="pi pi-plus" class="p-button-success"(click)="openNew()"></button>
 					</div>
 				</ng-template>
 
@@ -18,7 +15,6 @@
 						<i class="pi pi-search"></i>
 						<input type="search" pInputText placeholder="Search by Name" (input)="onFilter(dv, $event)">
 					</span>
-					<!-- <p-dataViewLayoutOptions></p-dataViewLayoutOptions> -->
 				</ng-template>
 			</p-toolbar>
 
@@ -37,15 +33,10 @@
 
 							</div>
 							<div class="flex align-items-center justify-content-center">
-								<button pButton pRipple icon="pi pi-pencil"
-									class="p-button-rounded p-button-success mr-2"
-									(click)="editPaciente(product)"></button>
-								<button pButton pRipple icon="pi pi-trash"
-									class="p-button-rounded p-button-warning mr-2" (click)="confirmDelete() "></button>
-								<button pButton pRipple icon="pi pi-book" class="p-button-rounded p-button-help mr-2"
-									(click)="openExp(paciente)"></button>
-								<button pButton pRipple icon="pi pi-calculator"
-									class="p-button-rounded p-button-check mr-2" (click)="openMed(medidas)"></button>
+								<button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"(click)="editProduct(product)"></button>
+								<button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning mr-2" (click)="deletedProduct() "></button>
+								<button pButton pRipple icon="pi pi-book" class="p-button-rounded p-button-help mr-2" (click)="openExp(paciente)"></button>
+								<button pButton pRipple icon="pi pi-calculator" class="p-button-rounded p-button-check mr-2" (click)="openMed(medidas)"></button>
 							</div>
 						</div>
 					</div>
@@ -66,9 +57,6 @@
 			</div>
 
 			<div class="field">
-				<!-- <label for="Ocupación">Ocupación</label>
-				<textarea id="ocupation" pInputTextarea [(ngModel)]="product.ocupation" required rows="3"
-					cols="20"></textarea> -->
 				<label for="Ocupación">Ocupación</label>
 				<input type="text" pInputText id="ocupation" [(ngModel)]="product.ocupation" required autofocus
 					[ngClass]="{'ng-invalid ng-dirty' : submitted && !product.ocupation}" />
@@ -124,16 +112,14 @@
 	</p-dialog>
 
 
-	<p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+	<p-dialog [(visible)]="deleteProductDialog" header="Confirmar" [modal]="true" [style]="{width:'450px'}">
 		<div class="flex align-items-center justify-content-center">
 			<i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-			<span *ngIf="product">¿Confirma que desea eliminar a <b>{{product.name}}</b>?</span>
+			<span *ngIf="product">¿Estás seguro de borrar <b>{{product.nombre}}</b>?</span>
 		</div>
 		<ng-template pTemplate="footer">
-			<button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
-				(click)="deletePacientetDialog = false"></button>
-			<button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
-				(click)="confirmDelete()"></button>
+			<button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductDialog = false"></button>
+			<button pButton pRipple icon="pi pi-check" class="p-button-text" label="Si" (click)="confirmDelete()"></button>
 		</ng-template>
 	</p-dialog>
 
@@ -748,13 +734,19 @@
 				<input pInputText id="fluctuado" type="text" />
 			</div>
 		</div>
-		<div class="field grid">
-			<label htmlFor="sometidoC" class="col-12 mb-2 md:col-2 md:mb-0"><b>¿Se ha sometido a alguna cirugía para
+		<div class="flex align-items-center gap-4">
+			<label htmlFor="sometidoC"><b>¿Se ha sometido a alguna cirugía para
 					perder peso?</b></label>
-			<div class="col-12 md:col-10">
-				<input pInputText id="sometidoC" type="text" />
-			</div>
+				<div class="flex align-items-center">
+					<p-radioButton name="group18" value="Si" [(ngModel)]="cirugiaPeso" inputId="si"></p-radioButton>
+					<label for="si" class="ml-2">Si</label>
+				</div>
+				<div class="flex align-items-center">
+					<p-radioButton name="group18" value="No" [(ngModel)]="cirugiaPeso" inputId="no"></p-radioButton>
+					<label for="no" class="ml-2">No</label>
+				</div>
 		</div>
+		<br>
 		<div class="field grid">
 			<label htmlFor="agua" class="col-12 mb-2 md:col-2 md:mb-0"><b>Consumo regular de agua simple al
 					día:</b></label>
@@ -771,24 +763,25 @@
 
 
 
+	<!-- MEDIDAS -->
  <p-dialog [(visible)]="medidasDialog" [style]="{width: '700'}" header="Medidas" [modal]="true" class="p-fluid">
 	 <p-tabView [activeIndex]="activeTabIndex">
 			<p-tabPanel header="1">
 				<h2>Medidas de Consulta</h2>
 				<div class="formgrid mb-3">
-					<span class="block mb-2">Peso Adentro</span>
+					<span class="block mb-2"><b>Peso Adentro</b></span>
 					<p-inputNumber inputId="peso"> </p-inputNumber>
 				</div>
 				<div class="formgrid mb-3">
-					<span class="block mb-2">Talla Adentro</span>
+					<span class="block mb-2"><b>Talla Adentro</b></span>
 					<p-inputNumber inputId="talla"> </p-inputNumber>
 				</div>
 				<div class="formgrid mb-3">
-					<span class="block mb-2">Talla Sentado</span>
+					<span class="block mb-2"><b>Talla Sentado</b></span>
 					<p-inputNumber inputId="tallasz"> </p-inputNumber>
 				</div>
 				<div class="field">
-					<span class="block mb-2">Carpo</span>
+					<span class="block mb-2"><b>Carpo</b></span>
 					<p-inputNumber inputId="cpo"> </p-inputNumber>
 				</div>
 
@@ -861,23 +854,23 @@
 						<p-inputNumber inputId="Bc"> </p-inputNumber>
 					</div>
 					<div class="field">
-						<label htmlFor="ant"><b>antebrazo</b> </label>
+						<label htmlFor="ant"><b>Antebrazo</b> </label>
 						<p-inputNumber inputId="ant"> </p-inputNumber>
 					</div>
 					<div class="field">
-						<label htmlFor="Mslo"><b>muslo</b> </label>
+						<label htmlFor="Mslo"><b>Muslo</b> </label>
 						<p-inputNumber inputId="Mslo"> </p-inputNumber>
 					</div>
 					<div class="field">
-						<label htmlFor="Gem"><b>gemelo</b> </label>
+						<label htmlFor="Gem"><b>Gemelo</b> </label>
 						<p-inputNumber inputId="Gem"> </p-inputNumber>
 					</div>
 					<div class="field">
-						<label htmlFor="Tx"><b>torax</b> </label>
+						<label htmlFor="Tx"><b>Torax</b> </label>
 						<p-inputNumber inputId="Tx"> </p-inputNumber>
 					</div>
 					<div class="field">
-						<label htmlFor="Glt"><b>gluteo</b> </label>
+						<label htmlFor="Glt"><b>Glúteo</b> </label>
 						<p-inputNumber inputId="Glt"> </p-inputNumber>
 					</div>
 				</p-tabPanel>
