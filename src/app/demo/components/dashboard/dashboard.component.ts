@@ -3,6 +3,7 @@ import { DataView } from 'primeng/dataview';
 import { Product } from 'src/app/demo/api/product';
 import { ProductService } from 'src/app/demo/service/product.service';
 import { MessageService } from 'primeng/api';
+import { PacientesService } from '../../service/pacientes.service';
 
 @Component({
     templateUrl:'./dashboard.component.html',
@@ -12,15 +13,21 @@ import { MessageService } from 'primeng/api';
 export class DashboardComponent implements OnInit {
    
 
-    products: Product[] = [];
+    // products: Product[] = [];
 
-    productDialog: boolean = false;
+    pacientesDialog: boolean = false;
 
-    deleteProductDialog: boolean = false;
+    deletepacientesDialog: boolean = false;
 
     submitted: boolean = false;
 
-    product: Product = {};
+    paciente = {
+       nombre:'',
+       ocupacion:'',
+       edad: 0,
+       genero:'',
+       telefono:''
+    };
 
     cols: any[] = [];
 
@@ -28,112 +35,117 @@ export class DashboardComponent implements OnInit {
 
     medidasDialog: boolean = false
 
+    pacientes = [];
 
-    constructor(private productService: ProductService, private messageService: MessageService) { }
 
-    ngOnInit() {
-        this.productService.getProducts().then(data => this.products = data);
 
-        this.cols = [
-            { field: 'product', header: 'Product' },
-            { field: 'price', header: 'Price' },
-            { field: 'category', header: 'Category' },
-            { field: 'rating', header: 'Reviews' },
-            { field: 'inventoryStatus', header: 'Status' },
-           
 
-        ];
+    constructor(private pacientesServices: PacientesService, private messageService: MessageService) { }
+
+   async ngOnInit() {
+       
+        let response = await this.pacientesServices.getPacientes();
+        this.pacientes = response.data;
        
     }
 
 
+    async refresh(){
+
+        let response = await this.pacientesServices.getPacientes();
+        this.pacientes = response.data;
+        
+    }
+
     activeTabIndex: number =0;
 
-    editProduct(product: Product) {
-        this.product = { ...product };
-        this.productDialog = true;
+//     editProduct(product: Product) {
+//         this.product = { ...product };
+//         this.productDialog = true;
+//     }
+
+//     deleteProduct(product: Product) {
+//         this.deleteProductDialog = true;
+//         this.product = { ...product };
+//     }
+
+//     confirmDelete() {
+//         this.deleteProductDialog = false;
+//         this.products = this.products.filter(val => val.id !== this.product.id);
+//         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+//         this.product = {};
+//     }
+
+  //ESte es el cancelar del formulario create-paciente
+   hideDialog() {
+       this.pacientesDialog = false;
+       this.submitted = false;
     }
 
-    deleteProduct(product: Product) {
-        this.deleteProductDialog = true;
-        this.product = { ...product };
-    }
-
-    confirmDelete() {
-        this.deleteProductDialog = false;
-        this.products = this.products.filter(val => val.id !== this.product.id);
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-        this.product = {};
-    }
-
-    hideDialog() {
-        this.productDialog = false;
-        this.submitted = false;
-    }
-
-    saveProduct() {
+    async savePacientes() {
         this.submitted = true;
+         
+        if (this.paciente.nombre?.trim()) {
+            //respuesta del metodo savePaciente
+            let response = await this.pacientesServices.savePaciente(this.paciente.nombre, this.paciente.ocupacion, this.paciente.edad, this.paciente.genero, this.paciente.telefono)
 
-        if (this.product.name?.trim()) {
-            if (this.product.id) {
-                // @ts-ignore
-                this.product.inventoryStatus = this.product.inventoryStatus.value ? this.product.inventoryStatus.value : this.product.inventoryStatus;
-                this.products[this.findIndexById(this.product.id)] = this.product;
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-            } else {
-                this.product.id = this.createId();
-                this.product.code = this.createId();
-                // @ts-ignore
-                this.product.inventoryStatus = this.product.inventoryStatus ? this.product.inventoryStatus.value : 'INSTOCK';
-                this.products.push(this.product);
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
-            }
+            if (response.status==200){
+                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Paciente Creado', life: 3000 });
+                this.pacientesDialog = false;
+                this.paciente = {
+                    nombre:'',
+                    ocupacion:'',
+                    edad: 0,
+                    genero:'',
+                    telefono:''
+                 };
 
-            this.products = [...this.products];
-            this.productDialog = false;
-            this.product = {};
+            }else{
+                this.messageService.add({  severity: 'error', summary: 'Error', detail: 'Paciente no Creado', life: 3000});
+            };
+
         }
     }
 
-    findIndexById(id: string): number {
-        let index = -1;
-        for (let i = 0; i < this.products.length; i++) {
-            if (this.products[i].id === id) {
-                index = i;
-                break;
-            }
-        }
+//     findIndexById(id: string): number {
+//         let index = -1;
+//         for (let i = 0; i < this.products.length; i++) {
+//             if (this.products[i].id === id) {
+//                 index = i;
+//                 break;
+//             }
+//         }
 
-        return index;
-    }
+//         return index;
+//     }
 
-    createId(): string {
-        let id = '';
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 5; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return id;
-    }
+//     createId(): string {
+//         let id = '';
+//         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//         for (let i = 0; i < 5; i++) {
+//             id += chars.charAt(Math.floor(Math.random() * chars.length));
+//         }
+//         return id;
+//     }
     
 
-    openExp() {
-        this.submitted = false;
-        this.expedienteDialog = true;
+     openExp() {
+//         this.submitted = false;
+//         this.expedienteDialog = true;
     }
 
-    openMed() {
-        this.submitted = false;
-        this.medidasDialog = true;
-    }
+     openMed() {
+//         this.submitted = false;
+//         this.medidasDialog = true;
+     }
 
     cerrarDialog() {
-        this.expedienteDialog = false;
-        this.submitted = false;
-    }
+//         this.expedienteDialog = false;
+//         this.submitted = false;
+     }
 
 
-    guardarMedidas(){
+     guardarMedidas(){
        
     }
 
@@ -141,16 +153,21 @@ export class DashboardComponent implements OnInit {
        
     }
 
-    openNew() {
-        this.product = {};
+     openNew() {
+        this.paciente = { 
+            nombre:'',
+            ocupacion:'',
+            edad: 0,
+            genero:'',
+            telefono:''};
         this.submitted = false;
-        this.productDialog = true;
+        this.pacientesDialog = true;
     }
 
 
     onFilter(dv: DataView, event: Event) {
-        dv.filter((event.target as HTMLInputElement).value);
-    }
+//         dv.filter((event.target as HTMLInputElement).value);
+     }
     
     
     selectedInfecciosas: string[] = [];

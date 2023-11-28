@@ -13,28 +13,28 @@
 				<ng-template pTemplate="right">
 					<span class="p-input-icon-left">
 						<i class="pi pi-search"></i>
-						<input type="search" pInputText placeholder="Search by Name" (input)="onFilter(dv, $event)">
+						<input type="search" pInputText placeholder="Buscar por nombre" (input)="onFilter(dv, $event)">
 					</span>
 				</ng-template>
 			</p-toolbar>
 
-			<p-dataView #dv [value]="products" [paginator]="true" [rows]="9" filterBy="name" layout="grid">
+			<p-dataView #dv [value]="pacientes" [paginator]="true" [rows]="9" filterBy="nombre" layout="grid">
 
-				<ng-template let-product pTemplate="gridItem">
+				<ng-template let-pacientes pTemplate="gridItem">
 					<div class="col-12 md:col-4">
 						<div class="card m-3 border-1 surface-border">
 							<div class="flex flex-column align-items-center text-center mb-3 justify-content-between">
-								<div class="text-2xl font-bold">{{product.name}}</div>
-								<div class="mb-3">{{product.ocupation}}</div>
-								<div class="mb-3">{{product.age}}<label> años</label></div>
-								<div class="mb-3">{{product.genre}}</div>
-								<div class="mb-3">{{product.pnumber}}</div>
+								<div class="text-2xl font-bold">{{pacientes.nombre}}</div>
+								<div class="mb-3">{{pacientes.ocupacion}}</div>
+									<div class="mb-3">{{pacientes.edad}}<label> años</label></div>
+									<div class="mb-3">{{pacientes.genero}}</div>
+									<div class="mb-3">{{pacientes.telefono}}</div>
 
 
 							</div>
 							<div class="flex align-items-center justify-content-center">
-								<button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"(click)="editProduct(product)"></button>
-								<button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning mr-2" (click)="deletedProduct() "></button>
+								<button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"(click)="editpacientes(pacientes)"></button>
+								<button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning mr-2" (click)="deletedpacientes() "></button>
 								<button pButton pRipple icon="pi pi-book" class="p-button-rounded p-button-help mr-2" (click)="openExp(paciente)"></button>
 								<button pButton pRipple icon="pi pi-calculator" class="p-button-rounded p-button-check mr-2" (click)="openMed(medidas)"></button>
 							</div>
@@ -45,57 +45,57 @@
 		</div>
 	</div>
 
-	<!-- acá empieza el cuadrito de info -->
-	<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Nuevo Paciente" [modal]="true"
+	<!-- acá empieza el cuadrito de info = formulario-->
+	<p-dialog [(visible)]="pacientesDialog" [style]="{width: '450px'}" header="Nuevo Paciente" [modal]="true"
 		class="p-fluid">
 		<ng-template pTemplate="content">
 			<div class="field">
-				<label for="name">Nombre Paciente:</label>
-				<input type="text" pInputText id="name" [(ngModel)]="product.name" required autofocus
-					[ngClass]="{'ng-invalid ng-dirty' : submitted && !product.name}" />
-				<small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name">El nombre es requerido.</small>
+				<label for="nombre">Nombre Paciente:</label>
+				<input type="text" pInputText id="nombre" [(ngModel)]="paciente.nombre" required autofocus
+					[ngClass]="{'ng-invalid ng-dirty' : submitted && !paciente.nombre}" />
+				<small class="ng-dirty ng-invalid" *ngIf="submitted && !paciente.nombre">El nombre es requerido.</small>
 			</div>
 
 			<div class="field">
-				<label for="Ocupación">Ocupación</label>
-				<input type="text" pInputText id="ocupation" [(ngModel)]="product.ocupation" required autofocus
-					[ngClass]="{'ng-invalid ng-dirty' : submitted && !product.ocupation}" />
-				<small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name">El campo es requerido.</small>
+				<label for="Ocupacion">Ocupación</label>
+				<input type="text" pInputText id="ocupacion" [(ngModel)]="paciente.ocupacion" required autofocus
+					[ngClass]="{'ng-invalid ng-dirty' : submitted && !paciente.ocupacion}" />
+				<small class="ng-dirty ng-invalid" *ngIf="submitted && !paciente.ocupacion">El campo es requerido.</small>
 			</div>
 
 			<div class="field">
 				<label class="mb-3">Genero</label>
 				<div class="formgrid grid">
 					<div class="field-radiobutton col-6">
-						<p-radioButton id="category1" name="category" value="Masculino"
-							[(ngModel)]="product.genre"></p-radioButton>
+						<p-radioButton id="Masculino" name="category" value="M"
+							[(ngModel)]="paciente.genero"></p-radioButton>
 						<label for="category">Masculino</label>
 					</div>
 					<div class="field-radiobutton col-6">
-						<p-radioButton id="category2" name="category" value="Femenino"
-							[(ngModel)]="product.genre"></p-radioButton>
+						<p-radioButton id="Femenino" name="category" value="F"
+							[(ngModel)]="paciente.genero"></p-radioButton>
 						<label for="category">Femenino</label>
 					</div>
 
 					<div class="formgrid mb-3">
 						<div class="field col">
 							<!-- <label for="age">Edad</label>
-							<p-inputNumber id="age" [(ngModel)]="product.age"></p-inputNumber>
+							<p-inputNumber id="age" [(ngModel)]="pacientes.age"></p-inputNumber>
 						    <-->
 							<span class="block mb-2">Edad</span>
-							<p-inputMask id="age" mask="99" [(ngModel)]="product.age" required autofocus
-								[ngClass]="{'ng-invalid ng-dirty' : submitted && !product.age}"></p-inputMask>
+							<p-inputMask id="edad" mask="99" [(ngModel)]="paciente.edad" required autofocus
+								[ngClass]="{'ng-invalid ng-dirty' : submitted && !paciente.edad}"></p-inputMask>
 						</div>
 					</div>
 
 					<div class="formgrid mb-3">
 						<div class="field col">
 							<!-- <label for="pnumber">Numero telefónico</label> -->
-							<!-- <p-inputNumber id="pnumber" [(ngModel)]="product.pnumber"></p-inputNumber> -->
+							<!-- <p-inputNumber id="pnumber" [(ngModel)]="pacientes.pnumber"></p-inputNumber> -->
 							<span class="block mb-2">Número Telefónico</span>
-							<p-inputMask id="pnumber" mask="(999) 999-9999" [(ngModel)]="product.pnumber" required
+							<p-inputMask id="telefono" mask="(999) 999-9999" [(ngModel)]="paciente.telefono" required
 								autofocus
-								[ngClass]="{'ng-invalid ng-dirty' : submitted && !product.pnumber}"></p-inputMask>
+								[ngClass]="{'ng-invalid ng-dirty' : submitted && !paciente.telefono}"></p-inputMask>
 						</div>
 					</div>
 				</div>
@@ -106,19 +106,19 @@
 			<button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
 				(click)="hideDialog()"></button>
 			<button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
-				(click)="saveProduct()"></button>
+				(click)= "savePacientes()"></button>
 		</ng-template>
 
 	</p-dialog>
 
 
-	<p-dialog [(visible)]="deleteProductDialog" header="Confirmar" [modal]="true" [style]="{width:'450px'}">
+	<p-dialog [(visible)]="deletepacientesDialog" header="Confirmar" [modal]="true" [style]="{width:'450px'}">
 		<div class="flex align-items-center justify-content-center">
 			<i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-			<span *ngIf="product">¿Estás seguro de borrar <b>{{product.nombre}}</b>?</span>
+			<span *ngIf="pacientes">¿Estás seguro de borrar <b>{{pacientes.nombre}}</b>?</span>
 		</div>
 		<ng-template pTemplate="footer">
-			<button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductDialog = false"></button>
+			<button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deletepacientesDialog = false"></button>
 			<button pButton pRipple icon="pi pi-check" class="p-button-text" label="Si" (click)="confirmDelete()"></button>
 		</ng-template>
 	</p-dialog>
