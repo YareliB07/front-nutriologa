@@ -15,30 +15,30 @@ export class AppMenuComponent implements OnInit {
     ngOnInit() {
         this.model = [
             {
-                label: 'Home',
+                label: 'Inicio',
                 items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }
+                    { label: 'Pacientes', icon: 'pi pi-fw pi-home', routerLink: ['/'] }
                 ]
             },
             {
-                label: 'UI Components',
+                label: 'Visualización',
                 items: [
-                    { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
-                    { label: 'List', icon: 'pi pi-fw pi-list', routerLink: ['/uikit/list'] },
-                    { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/uikit/charts'] }
+                    // { label: 'Expedientes', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
+                    // // { label: 'List', icon: 'pi pi-fw pi-list', routerLink: ['/uikit/list'] },
+                    { label: 'Graficas', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/uikit/charts'] }
                 ]
             },
-            {
-                label: 'Pages',
-                icon: 'pi pi-fw pi-briefcase',
-                items: [
-                    {
-                        label: 'Crud',
-                        icon: 'pi pi-fw pi-pencil',
-                        routerLink: ['/pages/crud']
-                    }
-                ]
-            }
+            // {
+            //     label: 'Pages',
+            //     icon: 'pi pi-fw pi-briefcase',
+            //     items: [
+            //         {
+            //             label: 'Crud',
+            //             icon: 'pi pi-fw pi-pencil',
+            //             routerLink: ['/pages/crud']
+            //         }
+            //     ]
+            // }
         ];
     }
 }
