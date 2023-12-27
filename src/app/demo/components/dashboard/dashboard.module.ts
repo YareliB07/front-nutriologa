@@ -20,6 +20,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputMaskModule } from 'primeng/inputmask';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
 	imports: [
@@ -41,8 +42,8 @@ import { InputMaskModule } from 'primeng/inputmask';
 		TabViewModule,
 		MultiSelectModule,
 		CheckboxModule,
-		InputMaskModule
-		
+		InputMaskModule,
+		ToastModule
 	],
 	declarations: [DashboardComponent]
 })
