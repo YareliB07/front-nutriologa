@@ -844,7 +844,7 @@
 
 
 	<!-- MEDIDAS -->
- <p-dialog [(visible)]="medidasDialog" [style]="{width: '700'}" header="Medidas • Última actualización: {{activeTabIndex == 0 ? 'Hola': activeTabIndex == 3 ? 'adios': 'cualquiercosa'}} " [modal]="true" class="p-fluid">
+ <p-dialog [(visible)]="medidasDialog" [style]="{width: '700'}" header="Medidas • Última actualización: {{activeTabIndex == 0 ? consulta.fecha : activeTabIndex == 3 ? medidasOseas.fecha: medidasMusculos.fecha}} " [modal]="true" class="p-fluid">
 	 <p-tabView [(activeIndex)]="activeTabIndex">
 			<p-tabPanel header="1">
 				<h2>Medidas de Consulta</h2>

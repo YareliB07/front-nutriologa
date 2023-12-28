@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { DataView } from 'primeng/dataview';
-import { Product } from 'src/app/demo/api/product';
-import { ProductService } from 'src/app/demo/service/product.service';
 import { MessageService } from 'primeng/api';
 import { PacientesService } from '../../service/pacientes.service';
 
@@ -168,7 +166,8 @@ export class DashboardComponent implements OnInit {
       nivel_oxigeno: 0,
       temperatura: 0,
       id_consulta: 0,
-      id_paciente:0
+      id_paciente:0,
+      fecha: 'ninguna'
      }
     
     medidasMusculos ={
@@ -185,7 +184,8 @@ export class DashboardComponent implements OnInit {
       torax: 0,
       gluteo: 0,
       id_musculos: 0,
-      id_paciente: 0
+      id_paciente: 0,
+      fecha: 'ninguna'
     }
 
     medidasOseas= {
@@ -198,7 +198,8 @@ export class DashboardComponent implements OnInit {
       femur: 0,
       tobillo: 0,
       id_huesos: 0,
-      id_paciente:0
+      id_paciente:0,
+      fecha: 'ninguna'
     }
 
 
@@ -479,7 +480,8 @@ export class DashboardComponent implements OnInit {
           nivel_oxigeno: 0,
           temperatura: 0,
           id_consulta: 0,
-          id_paciente:0
+          id_paciente:0,
+          fecha: 'ninguna'
         }
 
       }
@@ -499,7 +501,8 @@ export class DashboardComponent implements OnInit {
           torax: 0,
           gluteo: 0,
           id_musculos: 0,
-          id_paciente: 0
+          id_paciente: 0,
+          fecha: 'ninguna'
         }
       }
 
@@ -514,7 +517,8 @@ export class DashboardComponent implements OnInit {
           femur: 0,
           tobillo: 0,
           id_huesos: 0,
-          id_paciente:0
+          id_paciente:0,
+          fecha: 'ninguna'
         }
       }
 

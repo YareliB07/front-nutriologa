@@ -2,11 +2,37 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { DataView } from 'primeng/dataview';
+import { PacientesService } from 'src/app/demo/service/pacientes.service';
+import { GraficasServices } from 'src/app/demo/service/graficas.service';
 
 @Component({
     templateUrl: './chartsdemo.component.html'
 })
 export class ChartsDemoComponent implements OnInit, OnDestroy {
+
+    paciente = {
+        id_paciente: 0,
+        nombre:'',
+        ocupacion:'',
+        edad: 0,
+        genero:'',
+        telefono:'',
+        fecha_nacimiento: ''
+     };
+      
+    pacientes = [];
+
+    sugerencias = [];
+
+    consultas = [];
+
+    musculos = [];
+
+    huesos = [];
+
+    imc: number = 0;
+
+    nombre: string = '';
 
     lineData: any;
 
@@ -16,23 +42,57 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
 
     barOptions: any;
 
-
     subscription: Subscription;
 
-    constructor(public layoutService: LayoutService) {
+    constructor(public layoutService: LayoutService, private pacientesServices: PacientesService, private graficasServices: GraficasServices) {
         this.subscription = this.layoutService.configUpdate$.subscribe(config => {
             this.initCharts();
         });
     }
 
-    ngOnInit() {
+   async ngOnInit() {
         this.initCharts();
+            //aquí está la función que retorna todos los pacientes
+             let response = await this.pacientesServices.getPacientes();
+             this.pacientes = response.data;
+             this.pacientes.sort(function (a, b) {
+                 if (a.id_paciente > b.id_paciente) {
+                   return 1;
+                 }
+                 if (a.id_paciente < b.id_paciente) {
+                   return -1;
+                 }
+                 // a must be equal to b
+                 return 0;
+             });
     }
 
-    onFilter(dv: DataView, event: Event) {
-        dv.filter((event.target as HTMLInputElement).value);
+    
+    onFilter(event: Event) {
+     this.sugerencias=this.pacientes.filter(p=>p.nombre.toLowerCase().indexOf((event['query']).toLowerCase()) > -1);
+    } //funcion que permite filtrar los nombres de los pacientes
+
+    async getData(){
+      if(this.paciente != null && this.paciente.id_paciente != 0){
+        this.consultas = await this.graficasServices.getConsultas(this.paciente.id_paciente)
+        this.musculos = await this.graficasServices.getMusculos(this.paciente.id_paciente)
+        this.huesos = await this.graficasServices.getHuesos(this.paciente.id_paciente)
+        this.calcularIMC()
+        this.nombre = this.paciente.nombre; 
+    }else{
+        window.alert("selecciona primero un paciente")
+    }
     }
 
+
+    calcularIMC(){
+        if(this.consultas.length > 0){
+            let consulta = this.consultas[this.consultas.length-1]
+            let peso = consulta['pesoadentro']
+            let talla = consulta['tallaadentro']
+            this.imc = peso / (talla*talla)
+        }
+    }
 
     initCharts() {
         const documentStyle = getComputedStyle(document.documentElement);
