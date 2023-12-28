@@ -98,7 +98,8 @@ async saveMusculos(parametros: any){
      gemelo: parametros.gemelo,
      torax: parametros.torax,
      gluteo: parametros.gluteo,
-     id_paciente: parametros.id_paciente
+     id_paciente: parametros.id_paciente,
+     fecha: fecha
     },{headers:{"Content-Type":"application/json"}}) //una cabezera para comunicarse
 }
 
@@ -114,7 +115,8 @@ async saveHuesos(parametros: any){
      carpo: parametros.carpo,
      femur: parametros.femur,
      tobillo: parametros.tobillo,
-     id_paciente: parametros.id_paciente
+     id_paciente: parametros.id_paciente,
+     fecha: fecha
     },{headers:{"Content-Type":"application/json"}}) //una cabezera para comunicarse
 }
 
@@ -154,7 +156,6 @@ async getUltimosHuesos(id: number){
     console.log("hubo un error")
   }
 }
-
 
 }
 

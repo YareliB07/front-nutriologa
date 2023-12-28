@@ -1,25 +1,53 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChartsDemoRoutingModule } from './chartsdemo-routing.module';
-import { ChartModule } from 'primeng/chart'
-import { ChartsDemoComponent } from './chartsdemo.component';
-import { ToolbarModule } from 'primeng/toolbar';
+import { FormsModule } from '@angular/forms';
+import { DataViewModule } from 'primeng/dataview';
+import { PickListModule } from 'primeng/picklist';
+import { OrderListModule } from 'primeng/orderlist';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { RatingModule } from 'primeng/rating';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
-import { DataViewModule } from 'primeng/dataview';
-import { OrderListModule } from 'primeng/orderlist';
+import { ToolbarModule } from 'primeng/toolbar';
+import { DialogModule } from 'primeng/dialog';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputMaskModule } from 'primeng/inputmask';
+import { ToastModule } from 'primeng/toast';
+import { ChartsDemoRoutingModule } from './chartsdemo-routing.module';
+import { ChartModule } from 'primeng/chart';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 @NgModule({
 	imports: [
-		CommonModule,
+		AutoCompleteModule,
 		ChartsDemoRoutingModule,
 		ChartModule,
-		ToolbarModule,
-		ButtonModule,
-		TabViewModule,
+		CommonModule,
+		FormsModule,
 		DataViewModule,
-		OrderListModule
+		PickListModule,
+		OrderListModule,
+		InputTextModule,
+		DropdownModule,
+		RatingModule,
+		ButtonModule,
+        ToolbarModule,
+		DialogModule,
+		RadioButtonModule,
+		InputNumberModule,
+		InputTextareaModule,
+		TabViewModule,
+		MultiSelectModule,
+		CheckboxModule,
+		InputMaskModule,
+		ToastModule
 	],
 	declarations: [ChartsDemoComponent]
 })
-export class ChartsDemoModule { }
+export class ChartsDemoModule { }import { ChartsDemoComponent } from './chartsdemo.component';
+
