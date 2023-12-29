@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
-import { DataView } from 'primeng/dataview';
 import { PacientesService } from 'src/app/demo/service/pacientes.service';
 import { GraficasServices } from 'src/app/demo/service/graficas.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
-    templateUrl: './chartsdemo.component.html'
+    templateUrl: './chartsdemo.component.html',
+    providers: [MessageService]
 })
 export class ChartsDemoComponent implements OnInit, OnDestroy {
 
@@ -34,17 +35,23 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
 
     nombre: string = '';
 
+    id: number = 0;
+
     lineData: any;
 
     barData: any;
+
+    barData2:any;
 
     lineOptions: any;
 
     barOptions: any;
 
+    barOptions2:any;
+
     subscription: Subscription;
 
-    constructor(public layoutService: LayoutService, private pacientesServices: PacientesService, private graficasServices: GraficasServices) {
+    constructor(public layoutService: LayoutService, private pacientesServices: PacientesService, private graficasServices: GraficasServices, private messageService: MessageService) {
         this.subscription = this.layoutService.configUpdate$.subscribe(config => {
             this.initCharts();
         });
@@ -78,9 +85,11 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
         this.musculos = await this.graficasServices.getMusculos(this.paciente.id_paciente)
         this.huesos = await this.graficasServices.getHuesos(this.paciente.id_paciente)
         this.calcularIMC()
-        this.nombre = this.paciente.nombre; 
+        this.nombre = this.paciente.nombre;
+        this.initCharts()
+        
     }else{
-        window.alert("selecciona primero un paciente")
+        this.messageService.add({  severity: 'warn', summary: 'Warn', detail: 'Selecciona primero un paciente', life: 3000}); 
     }
     }
 
@@ -91,33 +100,48 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
             let peso = consulta['pesoadentro']
             let talla = consulta['tallaadentro']
             this.imc = peso / (talla*talla)
+        }else{ ///// SE AUMENTA ESTE ELSE /////
+            this.imc=0;
         }
     }
+
 
     initCharts() {
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-        
-        this.barData = {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
-            datasets: [
-                {
-                    label: 'Peso primer cita',
-                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
-                    borderColor: documentStyle.getPropertyValue('--primary-500'),
-                    data: [75, 59, 80, 81, 56, 64, 51]
-                },
-                {
-                    label: 'Peso segunda cita',
-                    backgroundColor: documentStyle.getPropertyValue('--primary-200'),
-                    borderColor: documentStyle.getPropertyValue('--primary-200'),
-                    data: [, 71, 40, 55, 86, 67, 90]
-                }
-            ]
-        };
+        ///Primera grafica (Pliegues)
+        let dataBar=[];
+        let val = 900;
+        for(let i=0; i<this.musculos.length; i++){
+            let info={
+                label: '',
+                backgroundColor: documentStyle.getPropertyValue('--teal-'+val),
+                borderColor: documentStyle.getPropertyValue('--primary-'),
+                data: []
+            }
+            info.label="Cita "+(i+1)+": "+this.musculos[i]['fecha']??'';
+            info.data.push(this.musculos[i]['bicep']??0);
+            info.data.push(this.musculos[i]['tricep']??0);
+            info.data.push(this.musculos[i]['subescapular']??0);
+            info.data.push(this.musculos[i]['supriliaco']??0);
+            info.data.push(this.musculos[i]['abdomen']??0);
+            info.data.push(this.musculos[i]['muslo']??0);
+            dataBar.push(info);
+            val = val-100; 
+        }
 
+        this.barData = {
+            labels: ['bicep',
+                'tricep',
+                'subescapular',
+                'supriliaco',
+                'abdomen',
+                'muslo'],
+            datasets: dataBar,
+        };
+        
         this.barOptions = {
             plugins: {
                 legend: {
@@ -131,11 +155,11 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
                     ticks: {
                         color: textColorSecondary,
                         font: {
-                            weight: 500
+                            weight: 800
                         }
                     },
                     grid: {
-                        display: false,
+                        display: true,
                         drawBorder: false
                     }
                 },
@@ -153,25 +177,99 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
 
        
 
-       
+        let dataBar2=[];
+        val=900;
+        for(let i=0; i<this.musculos.length; i++){
+            let info={
+                label: '',
+                backgroundColor: documentStyle.getPropertyValue('--teal-'+val),
+                borderColor: documentStyle.getPropertyValue('--primary-'),
+                data: []
+            }
+            info.label="Cita "+(i+1)+": "+this.musculos[i]['fecha']??'';
+            info.data.push(this.musculos[i]['bicep_relajado']??0);
+            info.data.push(this.musculos[i]['bicep_contraido']??0);
+            info.data.push(this.musculos[i]['antebrazo']??0);
+            info.data.push(this.musculos[i]['gemelo']??0);
+            info.data.push(this.musculos[i]['torax']??0);
+            info.data.push(this.musculos[i]['gluteo']??0);
+            dataBar2.push(info);
+            val-=100;
+        }
 
-        this.lineData = {
-            labels: ['Enero', 'Febrrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
+        this.barData2 = {
+            labels: [
+                'bicep relajado',
+                'bicep contraido',
+                'antebrazo',
+                'gemelo',
+                'torax',
+                'gluteo'],
+            datasets: dataBar2,
+        };
+        
+        this.barOptions2 = {
+            plugins: {
+                legend: {
+                    labels: {
+                        fontColor: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary,
+                        font: {
+                            weight: 800
+                        }
+                    },
+                    grid: {
+                        display: true,
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                },
+            }
+        };
+
+
+       
+        ///Segunda (consulta: Frecuencia cardiaca y oxigeno)
+        let dataFechas=[]
+        let dataFrecuenciaCardiaca=[]
+        let dataNivelOxigeno=[]
+    
+        for(let i=0; i<this.consultas.length; i++){
+            dataFechas.push(this.consultas[i]['fecha'])
+            dataFrecuenciaCardiaca.push(this.consultas[i]['frecuencia_cardiaca']??0)
+            dataNivelOxigeno.push(this.consultas[i]['nivel_oxigeno']??0)
+        }
+            this.lineData = {
+            labels: dataFechas,
             datasets: [
                 {
-                    label: 'Primer cita',
-                    data: [65, 59, 80, 81, 56, 55, 40],
+                    label: 'Frecuencia Cardiaca',
+                    data: dataFrecuenciaCardiaca,
                     fill: false,
-                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
-                    borderColor: documentStyle.getPropertyValue('--primary-500'),
+                    backgroundColor: documentStyle.getPropertyValue('--teal-600'),
+                    borderColor: documentStyle.getPropertyValue('--teal-600'),
                     tension: .4
                 },
                 {
-                    label: 'Tercera cita',
-                    data: [56, 65, 97, 48, 51, 27, 80],
+                    label: 'Nivel de Oxigeno',
+                    data: dataNivelOxigeno,
                     fill: false,
-                    backgroundColor: documentStyle.getPropertyValue('--primary-200'),
-                    borderColor: documentStyle.getPropertyValue('--primary-200'),
+                    backgroundColor: documentStyle.getPropertyValue('--teal-300'),
+                    borderColor: documentStyle.getPropertyValue('--teal-300'),
                     tension: .4
                 }
             ]
@@ -188,7 +286,10 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
             scales: {
                 x: {
                     ticks: {
-                        color: textColorSecondary
+                        color: textColorSecondary,
+                        font: {
+                            weight: 800
+                        }
                     },
                     grid: {
                         color: surfaceBorder,
