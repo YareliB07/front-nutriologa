@@ -273,8 +273,7 @@ export class DashboardComponent implements OnInit {
         this.deletepacientesDialog = false;
         // this.paciente = this.paciente.filter(val => val.id_paciente !== this.paciente.id_paciente);
         try {
-            let response = await this.pacientesServices.deletePaciente(this.paciente.id_paciente);
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+            let response = await this.pacientesServices.deletePaciente(this.paciente.id_paciente);         
             this.paciente = {
                 id_paciente: 0,
                 nombre: '',
@@ -310,8 +309,6 @@ export class DashboardComponent implements OnInit {
                 let response = await this.pacientesServices.savePaciente(this.paciente.nombre, this.paciente.ocupacion, this.paciente.edad, this.paciente.genero, this.paciente.telefono, this.paciente.fecha_nacimiento)
 
                 if (response.status==200){
-                    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Paciente Creado', life: 3000 });
-                    // this.pacientes.push(this.paciente);
                     this.pacientesDialog = false;
                     this.paciente = {
                         id_paciente: 0,
@@ -326,7 +323,6 @@ export class DashboardComponent implements OnInit {
                     }
             } catch(error){
                 this.messageService.add({  severity: 'error', summary: 'Error', detail: 'Paciente no Creado', life: 3000});
-               console.log("hubo un error");
             }
             
         }
@@ -546,14 +542,13 @@ export class DashboardComponent implements OnInit {
             let response = await this.pacientesServices.updateExpediente(transformar, this.idExpediente, this.paciente.id_paciente)
 
             if (response.status==200){
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Expediente Creado', life: 3000 });
+                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Expediente Actualizado', life: 3000 });
                 this.expedienteDialog = false;
                 this.submitted = false;
                  this.vaciarExp() 
                 }
         } catch(error){
-            this.messageService.add({  severity: 'error', summary: 'Error', detail: 'Expediente no Creado', life: 3000});
-           console.log("hubo un error");
+            this.messageService.add({  severity: 'error', summary: 'Error', detail: 'Expediente no Actualizado', life: 3000});
         }
         
       }
@@ -591,9 +586,12 @@ export class DashboardComponent implements OnInit {
       let response = await this.pacientesServices.saveConsulta(this.consulta)
         if(response.status==200){
           this.consulta = response.data
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Consulta guardada', life: 3000 });
+                
         }
     }catch(error){
-      window.alert("hubo un error");
+      this.messageService.add({  severity: 'error', summary: 'Error', detail: 'Consulta no guardada', life: 3000});
+        
     }
 
    }
@@ -604,9 +602,12 @@ export class DashboardComponent implements OnInit {
       let response = await this.pacientesServices.saveMusculos(this.medidasMusculos)
         if(response.status==200){
           this.consulta = response.data
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Información guardada', life: 3000 }); 
         }
     }catch(error){
-      window.alert("hubo un error");
+  
+      this.messageService.add({  severity: 'error', summary: 'Error', detail: 'Información no guardada', life: 3000});
+           
     }
 
    }
@@ -617,9 +618,11 @@ export class DashboardComponent implements OnInit {
       let response = await this.pacientesServices.saveHuesos(this.medidasOseas)
         if(response.status==200){
           this.consulta = response.data
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Información guardada', life: 3000 }); 
         }
     }catch(error){
-      window.alert("hubo un error");
+      this.messageService.add({  severity: 'error', summary: 'Error', detail: 'Informacion no guardada', life: 3000});
+           
     }
 
    }
