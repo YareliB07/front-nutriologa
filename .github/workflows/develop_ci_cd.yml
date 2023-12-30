@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ "develop"]
 jobs:
-  develop-ci-cd:
+  build-develop:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,19 +13,27 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - name: make .env 
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_DEV_DATABASE_URL : ${{ secrets.DEV_DATABASE_URL }}
-          file_name: .env
-          fail_on_empty: false
-      
+      - name: CI
+        run: npm ci
+          
+      - name: build angular, output in dist/sakai-ng
+        run: |
+          CI=false npm run build
+          
       - name: show dir, .env file
         run: |
-          cat .env 
+          ls -la 
+          
+      - name: download, run httpd image, container name serving_base
+        run: |
+          docker run -d --name serving_base httpd
+          
+      - name: cp angular build to container
+        run: |
+          docker cp dist/sakai-ng/.  serving_base:/usr/local/apache2/htdocs
           
       - name: Build the custom Docker image
-        run: docker build -t ${{secrets.DOCKER_USER}}/${{secrets.MODEL_NAME}}:${{github.sha}} .
+        run: docker commit --change "ENV MODEL_NAME ${{secrets.MODEL_NAME}}" serving_base ${{secrets.DOCKER_USER}}/${{secrets.MODEL_NAME}}:${{github.sha}}
 
       - name: show docker images
         run: docker images
@@ -54,7 +62,6 @@ jobs:
 
       - name: ls -la 
         run: cat manifests/k8s.yml
-        
       - uses: okteto/context@2.7.0
         with:
           token: ${{secrets.OKTETO_TOKEN }}
