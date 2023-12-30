@@ -1,11 +1,11 @@
 <div class="layout-topbar">
     <a class="layout-topbar-logo" routerLink="">
-        <img src="../../assets/layout/styles/layout/images/nutricion.jpeg" height="50" alt="logo">
-        <span>Nutrición</span>
+        <img src="../../assets/layout/styles/layout/images/nutricionimg.png" height="30" alt="logo">
+        <span style="color: white;">Nutrición</span>
     </a>
 
     <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
-        <i class="pi pi-bars"></i>
+        <i class="pi pi-bars" style="color: white;"></i>
     </button>
 
     <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button" (click)="layoutService.showProfileSidebar()">
@@ -14,8 +14,8 @@
 
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
         <button class="p-link layout-topbar-button">
-            <i class="pi pi-user"></i>
-            <span>Profile</span>
+            <i class="pi pi-user" style="color: white;"></i>
+            <span style="color: white;">Perfil</span>
         </button>
     </div>
 </div>
