@@ -4,11 +4,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
 import { LoginComponent } from './login/login.component';
-
-import {InputTextModule} from 'primeng/inputtext';
-import {CardModule} from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-
 @NgModule({
     declarations: [
         AppComponent,
@@ -17,9 +12,6 @@ import { ButtonModule } from 'primeng/button';
     imports: [
         AppRoutingModule,
         AppLayoutModule,
-        CardModule,
-        InputTextModule,
-        ButtonModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
