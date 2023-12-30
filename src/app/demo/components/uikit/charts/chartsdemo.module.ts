@@ -50,4 +50,3 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 	declarations: [ChartsDemoComponent]
 })
 export class ChartsDemoModule { }import { ChartsDemoComponent } from './chartsdemo.component';
-
