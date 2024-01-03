@@ -12,12 +12,10 @@
         <i class="pi pi-ellipsis-v"></i>
     </button>
 
-    <div #topbarmenu class="layout-topbar-menu">
+    <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
         <button class="p-link layout-topbar-button" (click)="logout()">
             <i class="pi pi-user" style="color: white;"></i>
             <span style="color: white;">Salir</span>
         </button>
     </div>
-    <br>
-    <label for="button" style="color: white;">Salir</label>
 </div>
