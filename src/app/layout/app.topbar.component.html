@@ -1,7 +1,7 @@
 <div class="layout-topbar">
     <a class="layout-topbar-logo" routerLink="">
         <img src="../../assets/layout/styles/layout/images/nutricionimg.png" height="30" alt="logo">
-        <span style="color: white;">Nutrición</span>
+        <span style="color: white; font-family: Segoe UI;">Nutrición</span>
     </a>
 
     <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
@@ -12,10 +12,12 @@
         <i class="pi pi-ellipsis-v"></i>
     </button>
 
-    <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button">
+    <div #topbarmenu class="layout-topbar-menu">
+        <button class="p-link layout-topbar-button" (click)="logout()">
             <i class="pi pi-user" style="color: white;"></i>
-            <span style="color: white;">Perfil</span>
+            <span style="color: white;">Salir</span>
         </button>
     </div>
+    <br>
+    <label for="button" style="color: white;">Salir</label>
 </div>

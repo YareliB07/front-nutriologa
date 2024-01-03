@@ -44,7 +44,7 @@ export class LoginService {
     signOut(auth).then(() => {
       // Sign-out successful.
       window.localStorage.removeItem("idUser");
-      this.router.navigate(["/"]);
+      this.router.navigate(["/login"]);
     }).catch((error) => {
       // An error happened.
     });
