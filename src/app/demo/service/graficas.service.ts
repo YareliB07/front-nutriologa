@@ -7,7 +7,7 @@ import * as moment from 'moment';
 export class GraficasServices {
 
     constructor() { }
-    url='https://fastapi-service-fhatimareyes.cloud.okteto.net/' 
+    url='http://127.0.0.1:8000/' 
     
 async getConsultas(id: number){
   try {

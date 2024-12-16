@@ -19,7 +19,17 @@ export class DashboardComponent implements OnInit {
 
     deletepacientesDialog: boolean = false;
 
+    createPatientDialog: boolean = false;
+
     submitted: boolean = false;
+
+    patientDialog: boolean = false;
+
+    patientStatus: string = '';
+
+    patientName: string = '';
+
+    pacienteSeleccionado: any = null;
 
     paciente = {
        id_paciente: 0,
@@ -234,6 +244,33 @@ export class DashboardComponent implements OnInit {
 
     activeTabIndex: number =0;
 
+    crearPatient(id_paciente: number) {
+      this.pacientesServices.crearPatient(id_paciente).subscribe({
+        next: (response) => {
+          console.log('Paciente creado:', response);
+          alert('Patient creado exitosamente en el servidor FHIR');
+        },
+        error: (error) => {
+          console.error('Error al crear patient:', error);
+          alert('Error al crear patient: ' + error.error.detail);
+        }
+      });
+    }
+
+    crearExpedienteFhir(id_paciente: number) {
+      this.pacientesServices.crearExpedienteFhir(id_paciente).subscribe({
+        next: (response) => {
+          console.log('Expediente creado:', response);
+          alert('Expediente asignado exitosamente en el servidor FHIR');
+          this.expedienteDialog = false;
+        },
+        error: (error) => {
+          console.error('Error al crear expediente:', error);
+          alert('Error al crear expediente: ' + error.error.detail);
+        }
+      });
+    }
+
 
        update(paciente: any){ //método para mandar a traer solamente el formulario de actualizar
         this.paciente = { ...paciente };
@@ -340,6 +377,7 @@ export class DashboardComponent implements OnInit {
             this.expediente = JSON.parse(data.data["datos"]) 
             this.submitted = false;
             this.expedienteDialog = true;
+            this.pacienteSeleccionado = paciente;
           }catch(error){
             this.vaciarExp()
             this.submitted = false;

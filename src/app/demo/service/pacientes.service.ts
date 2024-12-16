@@ -1,16 +1,30 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
 import * as moment from 'moment';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 
 @Injectable({providedIn:"root"})
 export class PacientesService {
 
-    constructor() { }
+    constructor(private http: HttpClient) { }
 
-    url='https://fastapi-service-fhatimareyes.cloud.okteto.net/' 
+    url='http://127.0.0.1:8000/' 
     async getPacientes() {
        return await axios.get(this.url+'pacientes/')
+    }
+
+    crearPatient(id_paciente: number): Observable<any> {
+      const url = `${this.url}patient`;
+      const body = { id_paciente };
+      return this.http.post(url, body);
+    }
+
+    crearExpedienteFhir(id_paciente: number): Observable<any> {
+      const url = `${this.url}expediente_fhir`;
+      const body = {id_paciente};
+      return this.http.post(url, body);
     }
 
     async savePaciente(nombre: string, ocupacion:string, edad:number, genero: string, telefono:string, fecha_nacimiento: string){

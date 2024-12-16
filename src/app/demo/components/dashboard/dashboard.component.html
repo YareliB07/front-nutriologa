@@ -30,8 +30,9 @@
 									<div class="mb-3">{{pacientes.edad}}<label> años</label></div>
 									<div class="mb-3">{{pacientes.genero=='F'?'Femenino':'Masculino'}}</div>
 									<div class="mb-3">{{pacientes.telefono}}</div>
-
-
+									<button pButton pRipple class="p-button-rounded p-button-danger mr-2" (click)="crearPatient(pacientes.id_paciente)">
+										Crear Patient 🔥
+									  </button>																		  
 							</div>
 							<div class="flex align-items-center justify-content-center">
 								<button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"(click)="update(pacientes)"></button>
@@ -209,7 +210,6 @@
 	<!-- INICIA EXPEDIENTE -->
 	<p-dialog [(visible)]="expedienteDialog" [style]="{width: 'auto'}"  header= "EXPEDIENTE • Última actualización: {{fechaExpediente}}" [modal]="true"
 		class="p-fluid">
-
 		<h1>Antecedentes médicos</h1>
 		<div class="field">
 			<label htmlFor="name1"><b>Motivo de consulta:</b> </label>
@@ -533,7 +533,7 @@
 				<input pInputText id="hip" type="text" [(ngModel)]="expediente.farmacosNutricion.hiperglucemia"/>
 			</div>
 			<div class="field col">
-				<label htmlFor="mod"><b>Modificación de absorción de lípidos::</b></label>
+				<label htmlFor="mod"><b>Modificación de absorción de lípidos:</b></label>
 				<input pInputText id="mod" type="text" [(ngModel)]="expediente.farmacosNutricion.lipidos" />
 			</div>
 		</div>
@@ -605,7 +605,7 @@
 			<input pInputText id="pesoC" type="text" [(ngModel)]="expediente.problemasNutricion.cambioPeso"/>
 		</div>
 		<div class="field">
-			<label htmlFor="dieta"><b>Dietas o tratamientos nutricios que ha realizado anteriormente:</b>
+			<label htmlFor="dieta"><b>Dietas o tratamientos nutricionales que ha realizado anteriormente:</b>
 			</label>
 			<input pInputText id="dieta" type="text" [(ngModel)]="expediente.problemasNutricion.dietas"/>
 		</div>
@@ -839,6 +839,14 @@
 		<div style="display: flex; justify-content: center;">
 			<button pButton pRipple class="p-button-rounded p-button-warning" (click)="idExpediente==0 ? guardarExp():updateExp()" 
 				style="width: 100px; height: 40px;"><b>Guardar</b></button>
+				<br>
+
+		<div *ngIf="pacienteSeleccionado">
+				<button pButton pRipple class="p-button-rounded p-button-danger" 
+                (click)="crearExpedienteFhir(pacienteSeleccionado.id_paciente)" style="width: 200px; height: 40px" >
+            Crear Expediente FHIR 🔥
+        </button>
+		</div>
 		</div>
 	</p-dialog>
 
